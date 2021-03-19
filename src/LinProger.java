@@ -32,8 +32,8 @@ public class LinProger {
         return numSol;
     }
 
-    public void setF(double[] rowZ) {
-        //this.rowZ = rowZ;
+    public void setF(double[] f) {
+        this.f = f;
     }
 
     public void setA(double[] rowA, int index) {
@@ -95,6 +95,16 @@ public class LinProger {
         }
 
         // set up rowM
+        for (int i = 0; i < rowM.length; i++) {
+            if (i < numVar) {
+                rowM[i] = m[i];
+            }else if (i < numVar + numCons) {
+                rowM[i] = 0;
+            }else {
+                // initial solution of rowM = solM
+                rowZ[i] = 0;
+            }
+        }
     }
 
     public LinProger() {
@@ -124,16 +134,14 @@ public class LinProger {
         a[1] = new double[] {0, 1, -1, 1};
         a[2] = new double[] {5, 0, 2, -2};
         a[3] = new double[] {-1, 0, 1, 1};
-
+        m = new double[] {0, 0, 0, 0};
         b = new double[] {1, 2, 0, 0};
 
         //double[] m; // big M
-        double[][] a; // A
-        double[] b;
 
 
         //rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
-        rowM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        //rowM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
         //rowS = new double[4][9];
         //rowS[0] = new double[] {-1, -1, 0, 0, 1, 0, 0, 0, 1};
         //owS[1] = new double[] {0, 1, -1, 1, 0, 1, 0, 0, 2};
