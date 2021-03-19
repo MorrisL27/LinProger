@@ -32,6 +32,7 @@ public class Main {
                         System.out.printf("%-15s%s", "VAR", "Modify the value of that variable.\n");
                         System.out.printf("%-15s%s", "STAT", "Display the status of variables and matrices.\n");
                         System.out.printf("%-15s%s", "RUN", "Calculate and display the tableau step by step.\n");
+                        System.out.printf("%-15s%s", "EXIT", "Exit the LinProger.\n");
                         // add more documentation here
 
                         System.out.println();
@@ -40,7 +41,9 @@ public class Main {
                             case "var":
                                 System.out.println("Modify the value of that variable.\n");
                                 System.out.println("VAR [variable]\n");
+                                System.out.println("VAR [variable] ; [row of A]\n");
                                 System.out.printf("%-15s%s", "variable", "the variable you want to modify.\n");
+                                System.out.printf("%-15s%s", "row of A", "the row of matrix A you want to modify.\n");
                                 // add more documentation here
 
                                 System.out.println();
@@ -61,6 +64,11 @@ public class Main {
                                 System.out.println("RUN\n");
                                 break;
 
+                            case "exit":
+                                System.out.println("Exit the LinProger.\n");
+                                System.out.println("EXIT\n");
+                                break;
+
                             default:
                                 System.out.println("Invalid command\n");
                         }
@@ -71,17 +79,58 @@ public class Main {
                     if (s.length == 2) {
                         String row = s[1].toLowerCase();
 
-                        if (row.equals("a")) {
-
-                        }
-
                         double[] entries;
                         int numVar;
                         int numCons;
 
+                        if (row.equals("a")) {
+
+                            System.out.print("Update row number: ");
+                            command = in.nextLine();
+                            s = handler(command);
+
+                            if (s.length == 1) {
+                                // update a[i - 1] with real index i
+
+                                int index;
+                                try {
+                                    index = Integer.parseInt(s[0]) - 1;
+                                } catch (Exception e){
+                                    System.out.println("Row number is not a number.\n");
+                                    break;
+                                }
+
+                                entries = fetchRow(row);
+
+                                if (entries == null) {
+                                    System.out.println("Update failed.\n");
+                                    break;
+                                }
+
+                                numVar = Nina.getNumVar();
+
+                                if (entries.length == numVar) {
+                                    Nina.setA(index, entries);
+                                }else {
+                                    System.out.println("Illegal number of arguments.\n");
+                                    System.out.println(row + " should contain " + numVar + " entries.\n");
+                                    break;
+                                }
+                                System.out.println("Update " + row + " successfully.\n");
+                            }else {
+                                System.out.println("Illegal number of arguments.\n");
+                            }
+                            break;
+                        }
+
                         switch(row) {
                             case "f":
                                 entries = fetchRow(row);
+
+                                if (entries == null) {
+                                    System.out.println("Update failed.\n");
+                                    break;
+                                }
 
                                 numVar = Nina.getNumVar();
 
@@ -92,7 +141,7 @@ public class Main {
                                     System.out.println(row + " should contain " + numVar + " entries.\n");
                                     break;
                                 }
-                                System.out.println("Update " + row + " successfully.");
+                                System.out.println("Update " + row + " successfully.\n");
                                 break;
 
                             case "fm":
@@ -100,6 +149,11 @@ public class Main {
 
                             case "b":
                                 entries = fetchRow(row);
+
+                                if (entries == null) {
+                                    System.out.println("Update failed.\n");
+                                    break;
+                                }
 
                                 numCons = Nina.getNumCons();
 
@@ -110,7 +164,7 @@ public class Main {
                                     System.out.println(row + " should contain " + numCons + " entries.\n");
                                     break;
                                 }
-                                System.out.println("Update " + row + " successfully.");
+                                System.out.println("Update " + row + " successfully.\n");
                                 break;
 
                             case "aeq":
@@ -130,7 +184,7 @@ public class Main {
                     }else if (s.length == 4) {
 
                     }else {
-                        System.out.println("Status of " + s[1] + " here: ");
+                        System.out.println("Illegal number of arguments.\n");
                     }
                     break;
 
@@ -139,7 +193,7 @@ public class Main {
                         System.out.println("Current status: ");
                         Nina.showTableau();
                     } else {
-                        System.out.println("Status of " + s[1] + " here: ");
+                        System.out.println("Illegal number of arguments.\n");
                     }
                     break;
 
@@ -205,7 +259,7 @@ public class Main {
             try {
                 entry = Double.parseDouble(s[i]);
             } catch (Exception e){
-                System.out.println("Row[" + i + "] is not a number.\n");
+                System.out.println("Row[" + (i + 1) + "] is not a number.\n");
                 entries = null;
                 break;
             }

@@ -37,8 +37,9 @@ public class LinProger {
         setTableau();
     }
 
-    public void setA(double[] rowA, int index) {
-        //this.rowS[index] = rowA;
+    public void setA(int index, double[] rowA) {
+        this.a[index] = rowA;
+        setTableau();
     }
 
     public void setFM(double[] fM) {
@@ -165,14 +166,27 @@ public class LinProger {
     }
 
     void showTableau() {
+        System.out.print("Basic ");
+
+        for (int i = 0; i < numVar; i++) {
+            System.out.printf(" %-5s", "x" + (i + 1));
+        }
+
+        for (int i = 0; i < numCons; i++) {
+            System.out.printf(" %-5s", "s" + (i + 1));
+        }
+
+        System.out.println(" Solution");
+
+
         // check z
-        System.out.print("f:    ");
+        System.out.print("z     ");
         for (int i = 0; i < rowZ.length; i++) {
             System.out.printf(" %+.2f", rowZ[i]);
         }
         System.out.println();
 
-        System.out.print("fM:   ");
+        System.out.print("M     ");
         for (int i = 0; i < rowM.length; i++) {
             System.out.printf(" %+.2f", rowM[i]);
         }
@@ -180,7 +194,7 @@ public class LinProger {
 
         // check A
         for (int j = 0; j < rowS.length; j++) {
-            System.out.print("S[" + j + "]: ");
+            System.out.print("S[" + (j + 1) + "]  ");
             for (int i = 0; i < rowS[0].length; i++) {
                 System.out.printf(" %+.2f", rowS[j][i]);
             }
@@ -190,7 +204,7 @@ public class LinProger {
     }
 
     void linProg() {
-        showTableau();
+        //showTableau();
 
         // for min
         //boolean finish = false;
@@ -283,7 +297,8 @@ public class LinProger {
                 }
             }
 
-            System.out.println("entering: " + entering + "; leaving: " + leaving);
+            // real index
+            System.out.println("entering: " + (entering + 1) + "; leaving: " + (leaving + 1));
             System.out.println("max: " + max + "; Min: " + min);
             showTableau();
         }
