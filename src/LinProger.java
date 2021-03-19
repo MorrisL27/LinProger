@@ -1,6 +1,6 @@
 public class LinProger {
     double[] rowZ;
-    double[] fM;
+    double[] rowM;
     double[][] rowS;
     double[] b;
     double[][] Aeq; // use lower case
@@ -12,6 +12,7 @@ public class LinProger {
 
     int numVar;
     int numCons;
+    final int numSol;
 
     public static void main(String[] args) {
         new LinProger().linProg();
@@ -25,13 +26,11 @@ public class LinProger {
         return numCons;
     }
 
-    public void setZ(double[] rowZ) {
-        this.rowZ = rowZ;
+    public int getNumSol() {
+        return numSol;
     }
 
-    public void setS(double[][] rowS) {
-        this.rowS = rowS;
-    }
+
 
     public void set(double[] rowA, int index) {
         //this.rowS[index] = rowA;
@@ -46,24 +45,36 @@ public class LinProger {
     }
 
     public void setFM(double[] fM) {
-        this.fM = fM;
+        //this.fM = fM;
     }
 
     public void setB(double[] b) {
         this.b = b;
     }
 
+
+    private void setZ(double[] rowZ) {
+        this.rowZ = rowZ;
+    }
+    private void setS(double[][] rowS) {
+        this.rowS = rowS;
+    }
+    private void setM(double[] rowM) {
+        this.rowM = rowM;
+    }
+    
     public void setTableau() {
-        tableau = new double[numCons][numVar + numCons + 1];
+        tableau = new double[numCons][numVar + numCons + numSol];
     }
 
     public LinProger() {
         numVar = 1;
         numCons = 1;
+        numSol = 1;
         setDimension(numVar, numCons);
 
         rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
-        fM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        rowM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
         rowS = new double[4][9];
         rowS[0] = new double[] {-1, -1, 0, 0, 1, 0, 0, 0, 1};
         rowS[1] = new double[] {0, 1, -1, 1, 0, 1, 0, 0, 2};
@@ -76,9 +87,9 @@ public class LinProger {
     public void setDimension(int n, int m) {
         numVar = n;
         numCons = m;
-        rowZ = new double[numVar + numCons + 1];
-        fM = new double[numVar + numCons + 1];
-        rowS = new double[numCons][numVar + numCons + 1];
+        rowZ = new double[numVar + numCons + numSol];
+        rowM = new double[numVar + numCons + numSol];
+        rowS = new double[numCons][numVar + numCons + numSol];
     }
 
     void showTableau() {
@@ -90,8 +101,8 @@ public class LinProger {
         System.out.println();
 
         System.out.print("fM:   ");
-        for (int i = 0; i < fM.length; i++) {
-            System.out.printf(" %+.2f", fM[i]);
+        for (int i = 0; i < rowM.length; i++) {
+            System.out.printf(" %+.2f", rowM[i]);
         }
         System.out.println();
 
@@ -116,11 +127,11 @@ public class LinProger {
             double max = -1;
             int entering = -1;
 
-            for (int i = 0; i < fM.length - 1; i++) {
-                if (fM[i] > 0) {
+            for (int i = 0; i < rowM.length - 1; i++) {
+                if (rowM[i] > 0) {
                     allNegative = false;
-                    if (max <= fM[i]) {
-                        max = fM[i];
+                    if (max <= rowM[i]) {
+                        max = rowM[i];
                         entering = i;
                     }
                 }
@@ -132,7 +143,7 @@ public class LinProger {
 
 
                 for (int i = 0; i < rowZ.length - 1; i++) {
-                    if (fM[i] == 0.0) {
+                    if (rowM[i] == 0.0) {
                         if (rowZ[i] > 0) {
                             allNegative = false;
                             if (max <= rowZ[i]) {
@@ -174,11 +185,11 @@ public class LinProger {
                 rowS[leaving][i] = rowS[leaving][i] / factor;
             }
 
-            factor = fM[entering];
-            for (int i = 0; i < fM.length; i++) {
-                fM[i] = fM[i] - factor * rowS[leaving][i];
-                if (Math.abs(fM[i]) < 0.0001) {
-                    fM[i] = 0;
+            factor = rowM[entering];
+            for (int i = 0; i < rowM.length; i++) {
+                rowM[i] = rowM[i] - factor * rowS[leaving][i];
+                if (Math.abs(rowM[i]) < 0.0001) {
+                    rowM[i] = 0;
                 }
             }
 
