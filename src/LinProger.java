@@ -2,13 +2,15 @@ public class LinProger {
     double[] rowZ;
     double[] rowM;
     double[][] rowS;
+
+    double[] f;
+    double[] m; // big M
+    double[][] a; // A
     double[] b;
-    double[][] Aeq; // use lower case
-    double[][] beq;
+    double[][] aeq; // Aeq
+    double[] beq;
     double[] lb;
     double[] ub;
-
-    double[][] tableau;
 
     int numVar;
     int numCons;
@@ -28,12 +30,6 @@ public class LinProger {
 
     public int getNumSol() {
         return numSol;
-    }
-
-
-
-    public void set(double[] rowA, int index) {
-        //this.rowS[index] = rowA;
     }
 
     public void setF(double[] rowZ) {
@@ -62,24 +58,87 @@ public class LinProger {
     private void setM(double[] rowM) {
         this.rowM = rowM;
     }
-    
+
     public void setTableau() {
-        tableau = new double[numCons][numVar + numCons + numSol];
+        rowZ = new double[numVar + numCons + numSol];
+        rowM = new double[numVar + numCons + numSol];
+        rowS = new double[numCons][numVar + numCons + numSol];
+
+        for (int i = 0; i < rowZ.length; i++) {
+            if (i < numVar) {
+                rowZ[i] = f[i];
+            }else if (i < numVar + numCons) {
+                rowZ[i] = 0;
+            }else {
+                // initial solution of f = 0
+                rowZ[i] = 10;
+            }
+        }
+
+        for (int i = 0; i < rowS.length; i++) {
+            double[] rowA = a[i];
+            for (int j = 0; j < rowS[i].length; j++) {
+                if (j < numVar) {
+                    rowS[i][j] = rowA[j];
+                } else if (j < numVar + numCons) {
+                    // arrange Im
+                    if (j - i == numVar) {
+                        rowS[i][j] = 1;
+                    }else {
+                        rowS[i][j] = 0;
+                    }
+                } else {
+                    // initial solution of rowS[i]
+                    rowS[i][j] = b[i];
+                }
+            }
+        }
+
+        // set up rowM
     }
 
     public LinProger() {
-        numVar = 1;
-        numCons = 1;
+        numVar = 4;
+        numCons = 4;
         numSol = 1;
         setDimension(numVar, numCons);
 
-        rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
+        setDefaultValue();
+
+        setTableau();
+    }
+
+    /*
+    rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
+    rowM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    rowS = new double[4][9];
+    rowS[0] = new double[] {-1, -1, 0, 0, 1, 0, 0, 0, 1};
+    rowS[1] = new double[] {0, 1, -1, 1, 0, 1, 0, 0, 2};
+    rowS[2] = new double[] {5, 0, 2, -2, 0, 0, 1, 0, 0};
+    rowS[3] = new double[] {-1, 0, 1, 1, 0, 0, 0, 1, 0};
+     */
+
+    private void setDefaultValue() {
+        f = new double[] {2, 2, 0, 0};
+        a[0] = new double[] {-1, -1, 0, 0};
+        a[1] = new double[] {0, 1, -1, 1};
+        a[2] = new double[] {5, 0, 2, -2};
+        a[3] = new double[] {-1, 0, 1, 1};
+
+        b = new double[] {1, 2, 0, 0};
+
+        //double[] m; // big M
+        double[][] a; // A
+        double[] b;
+
+
+        //rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
         rowM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        rowS = new double[4][9];
-        rowS[0] = new double[] {-1, -1, 0, 0, 1, 0, 0, 0, 1};
-        rowS[1] = new double[] {0, 1, -1, 1, 0, 1, 0, 0, 2};
-        rowS[2] = new double[] {5, 0, 2, -2, 0, 0, 1, 0, 0};
-        rowS[3] = new double[] {-1, 0, 1, 1, 0, 0, 0, 1, 0};
+        //rowS = new double[4][9];
+        //rowS[0] = new double[] {-1, -1, 0, 0, 1, 0, 0, 0, 1};
+        //owS[1] = new double[] {0, 1, -1, 1, 0, 1, 0, 0, 2};
+        //rowS[2] = new double[] {5, 0, 2, -2, 0, 0, 1, 0, 0};
+        //rowS[3] = new double[] {-1, 0, 1, 1, 0, 0, 0, 1, 0};
     }
 
     // n: number of variables
@@ -90,6 +149,9 @@ public class LinProger {
         rowZ = new double[numVar + numCons + numSol];
         rowM = new double[numVar + numCons + numSol];
         rowS = new double[numCons][numVar + numCons + numSol];
+        f = new double[numVar];
+        a = new double[numCons][numVar];
+        b = new double[numCons];
     }
 
     void showTableau() {
