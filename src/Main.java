@@ -75,24 +75,42 @@ public class Main {
 
                         }
 
+                        double[] entries;
+                        int numVar;
+                        int numCons;
+
                         switch(row) {
                             case "f":
-                                double[] entries = fetchRow(row);
+                                entries = fetchRow(row);
 
-                                int numVar = Nina.getNumVar();
-                                if (s.length == numVar) {
+                                numVar = Nina.getNumVar();
+
+                                if (entries.length == numVar) {
                                     Nina.setF(entries);
                                 }else {
                                     System.out.println("Illegal number of arguments.\n");
-                                    System.out.println("f should contain " + numVar + " entries.\n");
+                                    System.out.println(row + " should contain " + numVar + " entries.\n");
+                                    break;
                                 }
-
+                                System.out.println("Update " + row + " successfully.");
                                 break;
+
                             case "fm":
                                 break;
 
-
                             case "b":
+                                entries = fetchRow(row);
+
+                                numCons = Nina.getNumCons();
+
+                                if (entries.length == numCons) {
+                                    Nina.setB(entries);
+                                }else {
+                                    System.out.println("Illegal number of arguments.\n");
+                                    System.out.println(row + " should contain " + numCons + " entries.\n");
+                                    break;
+                                }
+                                System.out.println("Update " + row + " successfully.");
                                 break;
 
                             case "aeq":

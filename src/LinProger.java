@@ -34,6 +34,7 @@ public class LinProger {
 
     public void setF(double[] f) {
         this.f = f;
+        setTableau();
     }
 
     public void setA(double[] rowA, int index) {
@@ -46,6 +47,7 @@ public class LinProger {
 
     public void setB(double[] b) {
         this.b = b;
+        setTableau();
     }
 
 
