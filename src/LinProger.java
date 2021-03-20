@@ -71,12 +71,16 @@ public class LinProger {
 
         for (int i = 0; i < rowZ.length; i++) {
             if (i < numVar) {
-                rowZ[i] = f[i];
+                if (f[i]!=0) {
+                    rowZ[i] = -f[i];
+                }else {
+                    rowZ[i] = f[i];
+                }
             }else if (i < numVar + numCons) {
                 rowZ[i] = 0;
             }else {
                 // initial solution of f = 0
-                rowZ[i] = 10;
+                rowZ[i] = 0;
             }
         }
 
@@ -134,7 +138,7 @@ public class LinProger {
      */
 
     private void setDefaultValue() {
-        f = new double[] {2, 2, 0, 0};
+        f = new double[] {-2, -2, 0, 0};
         a[0] = new double[] {-1, -1, 0, 0};
         a[1] = new double[] {0, 1, -1, 1};
         a[2] = new double[] {5, 0, 2, -2};
@@ -233,7 +237,6 @@ public class LinProger {
                 max = -1;
                 entering = -1;
 
-
                 for (int i = 0; i < rowZ.length - 1; i++) {
                     if (rowM[i] == 0.0) {
                         if (rowZ[i] > 0) {
@@ -270,7 +273,6 @@ public class LinProger {
                 break;
             }
 
-
             double factor = rowS[leaving][entering];
 
             for (int i = 0; i < rowS[leaving].length; i++) {
@@ -289,8 +291,6 @@ public class LinProger {
             for (int i = 0; i < rowZ.length; i++) {
                 rowZ[i] = rowZ[i] - factor * rowS[leaving][i];
             }
-
-
 
             for (int i = 0; i < rowS.length; i++) {
                 if (i == leaving) {
