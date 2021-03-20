@@ -312,21 +312,21 @@ public class Main {
     }
 
     public static void defaultInitialize() {
-        int numVar = 2;
+        int numVar = 3;
         int numCons = 3;
         //numSol = 1;
         Nina.setDimension(numVar, numCons);
 
-        double[] f = new double[] {3, 2, 0, 0};
+        double[] f = new double[] {4, 1, 0};
         double[][] a = new double[numCons][];
 
-        a[0] = new double[] {1, 1};
-        a[1] = new double[] {2, 1};
-        a[2] = new double[] {4, 3};
+        a[0] = new double[] {3, 1, 0};
+        a[1] = new double[] {4, 3, -1};
+        a[2] = new double[] {1, 2, 0};
 
-        double[] m = new double[] {0, 0};
-        double[] b = new double[] {3, 4, 10};
+        double[] m = new double[] {-7, -4, 1};
+        double[] b = new double[] {3, 6, 4};
 
-        Nina.initialize(f, 0, m, a, b);
+        Nina.initialize(f, 0, m, 9, a, b);
     }
 }
