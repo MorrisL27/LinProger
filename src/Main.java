@@ -198,7 +198,7 @@ public class Main {
                     break;
 
                 case "run":
-                    Nina.linProg();
+                    Nina.run();
                     break;
 
                 case "def":

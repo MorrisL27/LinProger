@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class LinProger {
     double[] rowZ;
     double[] rowM;
@@ -17,7 +19,7 @@ public class LinProger {
     final int numSol;
 
     public static void main(String[] args) {
-        new LinProger().linProg();
+        new LinProger().run();
     }
 
     public int getNumVar() {
@@ -165,7 +167,11 @@ public class LinProger {
         b = new double[numCons];
     }
 
-    void showTableau() {
+    public void showTableau() {
+        showTableau(rowZ, rowM, rowS);
+    }
+
+    private void showTableau(double[] rowZ, double[] rowM, double[][] rowS) {
         System.out.print("Basic ");
 
         for (int i = 0; i < numVar; i++) {
@@ -203,7 +209,7 @@ public class LinProger {
         System.out.println();
     }
 
-    void linProg() {
+    private void linProg(double[] rowZ, double[] rowM, double[][] rowS) {
         //showTableau();
 
         // for min
@@ -300,7 +306,15 @@ public class LinProger {
             // real index
             System.out.println("entering: " + (entering + 1) + "; leaving: " + (leaving + 1));
             System.out.println("max: " + max + "; Min: " + min);
-            showTableau();
+            showTableau(rowZ, rowM, rowS);
         }
+    }
+
+    public void run() {
+        double[] rowZ = Arrays.copyOf(this.rowZ, this.rowZ.length);
+        double[] rowM = Arrays.copyOf(this.rowM, this.rowM.length);
+        double[][] rowS = Arrays.copyOf(this.rowS, this.rowS.length);
+
+        linProg(rowZ, rowM, rowS);
     }
 }
