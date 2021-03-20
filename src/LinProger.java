@@ -92,11 +92,10 @@ public class LinProger {
         this.m = m;
         this.a = a;
         this.b = b;
-        tempF = Arrays.copyOf(f, f.length);
-
-
         setTableau();
-        displayZ = Arrays.copyOf(rowZ, rowZ.length);
+
+        // check mode and set up tempF and displayZ
+        checkMode();
     }
 
 
@@ -208,15 +207,20 @@ public class LinProger {
 
     // n: number of variables
     // m: number of constraints
-    public void setDimension(int n, int m) {
-        numVar = n;
-        numCons = m;
+    public void setDimension(int numVar, int numCons) {
+        this.numVar = numVar;
+        this.numCons = numCons;
         rowZ = new double[numVar + numCons + numSol];
         rowM = new double[numVar + numCons + numSol];
         rowS = new double[numCons][numVar + numCons + numSol];
+
         f = new double[numVar];
         a = new double[numCons][numVar];
         b = new double[numCons];
+        m = new double[numVar];
+        solF = 0;
+
+        checkMode();
     }
 
     public void showTableau() {
