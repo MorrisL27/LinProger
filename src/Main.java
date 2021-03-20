@@ -85,6 +85,32 @@ public class Main {
 
                         if (row.equals("a")) {
 
+                            // update the whole matrix A
+                            numCons = Nina.getNumCons();
+
+                            for (int i = 0; i < numCons; i++) {
+                                entries = fetchRow("" + (i + 1));
+
+                                if (entries == null) {
+                                    System.out.println("Update failed.\n");
+                                    break;
+                                }
+
+                                numVar = Nina.getNumVar();
+
+                                if (entries.length == numVar) {
+                                    Nina.setA(i, entries);
+                                }else {
+                                    System.out.println("Illegal number of arguments.\n");
+                                    System.out.println(row + " should contain " + numVar + " entries.\n");
+                                    break;
+                                }
+                                System.out.println("Update " + row + " successfully.\n");
+                            }
+
+
+                            /*
+
                             System.out.print("Update row number: ");
                             command = in.nextLine();
                             s = handler(command);
@@ -119,7 +145,8 @@ public class Main {
                                 System.out.println("Update " + row + " successfully.\n");
                             }else {
                                 System.out.println("Illegal number of arguments.\n");
-                            }
+                            }*/
+
                             break;
                         }
 
@@ -232,6 +259,7 @@ public class Main {
                 case "exit":
                     System.out.println("See you! \u2708\n");
                     break;
+
                 default:
                     System.out.println("Invalid command.\n");
             }

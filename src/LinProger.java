@@ -1,22 +1,22 @@
 import java.util.Arrays;
 
 public class LinProger {
-    double[] rowZ;
-    double[] rowM;
-    double[][] rowS;
+    private double[] rowZ;
+    private double[] rowM;
+    private double[][] rowS;
 
-    double[] f;
-    double[] m; // big M
-    double[][] a; // A
-    double[] b;
-    double[][] aeq; // Aeq
-    double[] beq;
-    double[] lb;
-    double[] ub;
+    private double[] f;
+    private double[] m; // big M
+    private double[][] a; // A
+    private double[] b;
+    private double[][] aeq; // Aeq
+    private double[] beq;
+    private double[] lb;
+    private double[] ub;
 
-    int numVar;
-    int numCons;
-    final int numSol;
+    private int numVar;
+    private int numCons;
+    private final int numSol;
 
     public static void main(String[] args) {
         new LinProger().run();
@@ -307,13 +307,19 @@ public class LinProger {
             System.out.println("entering: " + (entering + 1) + "; leaving: " + (leaving + 1));
             System.out.println("max: " + max + "; Min: " + min);
             showTableau(rowZ, rowM, rowS);
+            //showTableau(rowZ, rowM, this.rowS);
         }
     }
 
     public void run() {
         double[] rowZ = Arrays.copyOf(this.rowZ, this.rowZ.length);
         double[] rowM = Arrays.copyOf(this.rowM, this.rowM.length);
-        double[][] rowS = Arrays.copyOf(this.rowS, this.rowS.length);
+        double[][] rowS = new double[this.rowS.length][];
+
+
+        for (int i = 0; i < this.rowS.length; i++) {
+            rowS[i] = Arrays.copyOf(this.rowS[i], this.rowS[i].length);
+        }
 
         linProg(rowZ, rowM, rowS);
     }
