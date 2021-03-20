@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LinProger {
@@ -14,12 +15,26 @@ public class LinProger {
     private double[] lb;
     private double[] ub;
 
+    private int[] bases;
+
     private int numVar;
     private int numCons;
-    private final int numSol;
+    private final int numSol = 1;
 
     public static void main(String[] args) {
         new LinProger().run();
+    }
+
+    public LinProger() {
+        // default initialization
+//        numVar = 4;
+//        numCons = 4;
+        //numSol = 1;
+//        setDimension(numVar, numCons);
+//        setDefaultValue();
+
+
+        //setTableau();
     }
 
     public int getNumVar() {
@@ -44,11 +59,20 @@ public class LinProger {
         setTableau();
     }
 
-    public void setFM(double[] fM) {
-        //this.fM = fM;
+    public void setfM(double[] m) {
+        this.m = m;
+        setTableau();
     }
 
     public void setB(double[] b) {
+        this.b = b;
+        setTableau();
+    }
+
+    public void initialize(double[] f, double[] m, double[][] a, double[] b) {
+        this.f = f;
+        this.m = m;
+        this.a = a;
         this.b = b;
         setTableau();
     }
@@ -68,6 +92,7 @@ public class LinProger {
         rowZ = new double[numVar + numCons + numSol];
         rowM = new double[numVar + numCons + numSol];
         rowS = new double[numCons][numVar + numCons + numSol];
+        bases = new int[numCons];
 
         for (int i = 0; i < rowZ.length; i++) {
             if (i < numVar) {
@@ -114,18 +139,18 @@ public class LinProger {
                 rowZ[i] = 0;
             }
         }
+
+        resetBases();
+
     }
 
-    public LinProger() {
-        numVar = 4;
-        numCons = 4;
-        numSol = 1;
-        setDimension(numVar, numCons);
-
-        setDefaultValue();
-
-        setTableau();
+    private void resetBases() {
+        for (int i = 0; i < bases.length; i++) {
+            bases[i] = i + numVar;
+        }
     }
+
+
 
     /*
     rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
@@ -137,6 +162,7 @@ public class LinProger {
     rowS[3] = new double[] {-1, 0, 1, 1, 0, 0, 0, 1, 0};
      */
 
+    /*
     private void setDefaultValue() {
         f = new double[] {-2, -2, 0, 0};
         a[0] = new double[] {-1, -1, 0, 0};
@@ -157,6 +183,7 @@ public class LinProger {
         //rowS[2] = new double[] {5, 0, 2, -2, 0, 0, 1, 0, 0};
         //rowS[3] = new double[] {-1, 0, 1, 1, 0, 0, 0, 1, 0};
     }
+*/
 
     // n: number of variables
     // m: number of constraints
@@ -204,17 +231,18 @@ public class LinProger {
 
         // check A
         for (int j = 0; j < rowS.length; j++) {
-            System.out.print("S[" + (j + 1) + "]  ");
+            System.out.print(findVariable(bases[j]) + "    ");
+            //System.out.print("S[" + (j + 1) + "]  ");
             for (int i = 0; i < rowS[0].length; i++) {
                 System.out.printf(" %+.2f", rowS[j][i]);
             }
             System.out.println();
         }
-        System.out.println();
+        //System.out.println();
     }
 
     private void linProg(double[] rowZ, double[] rowM, double[][] rowS) {
-        //showTableau();
+        showTableau();
 
         // for min
         //boolean finish = false;
@@ -224,6 +252,8 @@ public class LinProger {
             boolean allNegative = true;
             double max = -1;
             int entering = -1;
+
+            ArrayList<String> str = new ArrayList<>();
 
             for (int i = 0; i < rowM.length - 1; i++) {
                 if (rowM[i] > 0) {
@@ -263,7 +293,7 @@ public class LinProger {
             for (int i = 0; i < rowS.length; i++) {
                 if (rowS[i][entering] > 0) {
                     double result = rowS[i][rowS[i].length - 1] / rowS[i][entering];
-                    System.out.println("result = " + rowS[i][rowS[i].length - 1] + "/" + rowS[i][entering] + " = " + result);
+                    str.add("result = " + rowS[i][rowS[i].length - 1] + "/" + rowS[i][entering] + " = " + result);
                     if (result < min) {
                         min = result;
                         leaving = i;
@@ -307,10 +337,25 @@ public class LinProger {
             }
 
             // real index
-            System.out.println("entering: " + (entering + 1) + "; leaving: " + (leaving + 1));
-            System.out.println("max: " + max + "; Min: " + min);
-            showTableau(rowZ, rowM, rowS);
+            //String enterVariable = findVariable(entering) + "\u0332";
+            //String leavingVariable = findVariable(bases[leaving]) + "\u0332";
+
+
+            String enterVariable = findVariable(entering);
+            String leavingVariable = findVariable(bases[leaving]);
+            str.add("entering: " + enterVariable + "; leaving: " + leavingVariable);
+            swapBases(entering + 1, leaving + 1);
+
+            str.add("max: " + max + "; Min: " + min);
+
             //showTableau(rowZ, rowM, this.rowS);
+            for (String s : str) {
+                System.out.println(s);
+            }
+            System.out.println();
+
+            showTableau(rowZ, rowM, rowS);
+            //System.out.println();
         }
 
         System.out.println("Optimal value " + optimum + " has found.\n");
@@ -328,5 +373,25 @@ public class LinProger {
         }
 
         linProg(rowZ, rowM, rowS);
+        resetBases();
+    }
+
+    private String findVariable(int id) {
+        if (id < 0) {
+            return "";
+        }else if (id < numVar) {
+            return "x" + (id + 1);
+        }else if (id < numVar + numCons) {
+            return "s" + (id + 1 - numVar);
+        }else {
+            return "";
+        }
+    }
+
+    private void swapBases(int entering, int leaving) {
+        int idEnter = entering - 1;
+        int positionLeave = leaving - 1;
+
+        bases[positionLeave] = idEnter;
     }
 }

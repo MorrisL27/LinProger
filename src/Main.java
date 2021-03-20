@@ -13,6 +13,8 @@ public class Main {
 
     public static void userInterface() {
         Nina = new LinProger();
+        defaultInitialize();
+
         System.out.println("Welcome to LinProger for simplex method.");
 
         Scanner in = new Scanner(System.in);
@@ -207,6 +209,7 @@ public class Main {
                     if (s.length == 1) {
                         System.out.println("Current status: ");
                         Nina.showTableau();
+                        System.out.println();
                     } else {
                         System.out.println("Illegal number of arguments.\n");
                     }
@@ -280,5 +283,24 @@ public class Main {
         }
 
         return entries;
+    }
+
+    public static void defaultInitialize() {
+        int numVar = 2;
+        int numCons = 3;
+        //numSol = 1;
+        Nina.setDimension(numVar, numCons);
+
+        double[] f = new double[] {-3, -2, 0, 0};
+        double[][] a = new double[numCons][];
+
+        a[0] = new double[] {1, 1};
+        a[1] = new double[] {2, 1};
+        a[2] = new double[] {4, 3};
+
+        double[] m = new double[] {0, 0};
+        double[] b = new double[] {3, 4, 10};
+
+        Nina.initialize(f, m, a, b);
     }
 }
