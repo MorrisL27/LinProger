@@ -44,8 +44,8 @@ public class Main {
                         switch (s[1]) {
                             case "var":
                                 System.out.println("Modify the value of that variable.\n");
-                                System.out.println("VAR [variable]\n");
-                                System.out.println("VAR [variable] ; [row of A]\n");
+                                System.out.println("VAR [variable]");
+                                System.out.println("VAR A [row of A]\n");
                                 System.out.printf("%-15s%s", "variable", "the variable you want to modify.\n");
                                 System.out.printf("%-15s%s", "row of A", "the row of matrix A you want to modify.\n");
                                 // add more documentation here
@@ -55,17 +55,18 @@ public class Main {
 
                             case "stat":
                                 System.out.println( "Display the status of variables and matrices.\n");
-                                System.out.println("STAT\n"
-                                    + "STAT [variable]\n");
-                                System.out.println("variable\t\n");
-                                System.out.printf("%-15s%s", "variable", "the variable you want to show the status.\n");
+                                //System.out.println("STAT\n" + "STAT [variable]\n");
+                                //System.out.println("variable\t\n");
+                                System.out.println("STAT\n");
+                                //System.out.printf("%-15s%s", "variable", "the variable you want to show the status.\n");
 
                                 System.out.println();
                                 break;
 
                             case "run":
                                 System.out.println("Calculate and display the tableau step by step.\n");
-                                System.out.println("RUN\n");
+                                System.out.println("RUN MIN");
+                                System.out.println("RUN MAX\n");
                                 break;
 
                             case "exit":
@@ -208,6 +209,12 @@ public class Main {
                 case "stat":
                     if (s.length == 1) {
                         System.out.println("Current status: ");
+                        if (Nina.getMode()) {
+                            System.out.println("mode: Max");
+                        }else {
+                            System.out.println("mode: Min");
+                        }
+
                         Nina.showTableau();
                         System.out.println();
                     } else {
@@ -216,7 +223,24 @@ public class Main {
                     break;
 
                 case "run":
-                    Nina.run();
+                    if (s.length == 2) {
+                        String mode = s[1].toLowerCase();
+                        switch(mode) {
+                            case "max":
+                                Nina.modeMax();
+                                Nina.run();
+                                break;
+                            case "min":
+                                Nina.modeMin();
+                                Nina.run();
+                                break;
+                            default:
+                                System.out.println("Invalid mode.");
+                                break;
+                        }
+                    } else {
+                        System.out.println("Illegal number of arguments.\n");
+                    }
                     break;
 
                 case "def":
@@ -291,7 +315,7 @@ public class Main {
         //numSol = 1;
         Nina.setDimension(numVar, numCons);
 
-        double[] f = new double[] {-3, -2, 0, 0};
+        double[] f = new double[] {3, 2, 0, 0};
         double[][] a = new double[numCons][];
 
         a[0] = new double[] {1, 1};

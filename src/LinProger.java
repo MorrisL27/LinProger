@@ -3,9 +3,11 @@ import java.util.Arrays;
 
 public class LinProger {
     private double[] rowZ;
+    private double[] displayZ;
     private double[] rowM;
     private double[][] rowS;
 
+    private double[] tempF;
     private double[] f;
     private double[] m; // big M
     private double[][] a; // A
@@ -21,6 +23,10 @@ public class LinProger {
     private int numCons;
     private final int numSol = 1;
 
+    private boolean modeMax;
+    // false: min mode
+    // true: max mode
+
     public static void main(String[] args) {
         new LinProger().run();
     }
@@ -33,6 +39,7 @@ public class LinProger {
 //        setDimension(numVar, numCons);
 //        setDefaultValue();
 
+        modeMax = false;// min mode initially
 
         //setTableau();
     }
@@ -51,6 +58,7 @@ public class LinProger {
 
     public void setF(double[] f) {
         this.f = f;
+        tempF = Arrays.copyOf(f, f.length);
         setTableau();
     }
 
@@ -74,7 +82,11 @@ public class LinProger {
         this.m = m;
         this.a = a;
         this.b = b;
+        tempF = Arrays.copyOf(f, f.length);
+
+
         setTableau();
+        displayZ = Arrays.copyOf(rowZ, rowZ.length);
     }
 
 
@@ -94,12 +106,13 @@ public class LinProger {
         rowS = new double[numCons][numVar + numCons + numSol];
         bases = new int[numCons];
 
+        // set rowZ by tempF
         for (int i = 0; i < rowZ.length; i++) {
             if (i < numVar) {
                 if (f[i]!=0) {
-                    rowZ[i] = -f[i];
+                    rowZ[i] = -tempF[i];
                 }else {
-                    rowZ[i] = f[i];
+                    rowZ[i] = tempF[i];
                 }
             }else if (i < numVar + numCons) {
                 rowZ[i] = 0;
@@ -141,7 +154,6 @@ public class LinProger {
         }
 
         resetBases();
-
     }
 
     private void resetBases() {
@@ -149,8 +161,6 @@ public class LinProger {
             bases[i] = i + numVar;
         }
     }
-
-
 
     /*
     rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
@@ -199,7 +209,9 @@ public class LinProger {
     }
 
     public void showTableau() {
-        showTableau(rowZ, rowM, rowS);
+
+
+        showTableau(displayZ, rowM, rowS);
     }
 
     private void showTableau(double[] rowZ, double[] rowM, double[][] rowS) {
@@ -358,11 +370,14 @@ public class LinProger {
             //System.out.println();
         }
 
-        System.out.println("Optimal value " + optimum + " has found.\n");
+        //System.out.println("Optimal value " + optimum + " has found.\n");
+        System.out.println("Optimal value has found.\n");
 
     }
 
     public void run() {
+        checkMode();
+
         double[] rowZ = Arrays.copyOf(this.rowZ, this.rowZ.length);
         double[] rowM = Arrays.copyOf(this.rowM, this.rowM.length);
         double[][] rowS = new double[this.rowS.length][];
@@ -374,6 +389,60 @@ public class LinProger {
 
         linProg(rowZ, rowM, rowS);
         resetBases();
+        setTableau();
+    }
+
+    public boolean getMode() {
+        return modeMax;
+    }
+
+    private void checkMode() {
+        if (modeMax) {
+            // set tempF to -f
+            for (int i = 0; i < tempF.length; i++) {
+                if (f[i] != 0) {
+                    tempF[i] = -f[i];
+                }else {
+                    tempF[i] = 0;
+                }
+            }
+
+            // set displayZ
+            for (int i = 0; i < displayZ.length; i++) {
+                if (rowZ[i] != 0) {
+                    displayZ[i] = -rowZ[i];
+                }else {
+                    displayZ[i] = 0;
+                }
+            }
+
+            setTableau();
+        }else {
+            // sync tempF to f
+            tempF = Arrays.copyOf(f, f.length);
+            displayZ = Arrays.copyOf(rowZ, rowZ.length);
+            setTableau();
+        }
+    }
+
+    public void modeMax() {
+        if (!modeMax) {
+            modeMax = true;
+            checkMode();
+            System.out.println("Nina run in max mode.");
+        }else {
+            System.out.println("Nina already in max mode.");
+        }
+    }
+
+    public void modeMin() {
+        if (modeMax) {
+            modeMax = false;
+            checkMode();
+            System.out.println("Nina run in min mode.");
+        }else {
+            System.out.println("Nina already in min mode.");
+        }
     }
 
     private String findVariable(int id) {
