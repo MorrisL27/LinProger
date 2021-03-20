@@ -375,7 +375,21 @@ public class LinProger {
             }
             System.out.println();
 
-            showTableau(rowZ, rowM, rowS);
+            // rowZ has been updated, also update displayZ
+            if (modeMax) {
+                // set displayZ
+                for (int i = 0; i < displayZ.length; i++) {
+                    if (rowZ[i] != 0) {
+                        displayZ[i] = -rowZ[i];
+                    }else {
+                        displayZ[i] = 0;
+                    }
+                }
+            }else {
+                displayZ = Arrays.copyOf(rowZ, rowZ.length);
+            }
+
+            showTableau(displayZ, rowM, rowS);
             //System.out.println();
         }
 
