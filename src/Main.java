@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
@@ -123,11 +124,12 @@ public class Main {
 
                                 numVar = Nina.getNumVar();
 
-                                if (entries.length == numVar) {
-                                    Nina.setF(entries);
+                                if (entries.length == (numVar + 1)) {
+                                    Nina.setF(Arrays.copyOf(entries, entries.length - 1));
+                                    Nina.setSolF(entries[entries.length - 1]);
                                 }else {
                                     System.out.println("Illegal number of arguments.\n");
-                                    System.out.println(row + " should contain " + numVar + " entries.\n");
+                                    System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
                                     break;
                                 }
                                 System.out.println("Update " + row + " successfully.\n");
@@ -325,6 +327,6 @@ public class Main {
         double[] m = new double[] {0, 0};
         double[] b = new double[] {3, 4, 10};
 
-        Nina.initialize(f, m, a, b);
+        Nina.initialize(f, 0, m, a, b);
     }
 }

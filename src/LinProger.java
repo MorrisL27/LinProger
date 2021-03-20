@@ -19,6 +19,8 @@ public class LinProger {
 
     private int[] bases;
 
+    private double solF;
+
     private int numVar;
     private int numCons;
     private final int numSol = 1;
@@ -60,6 +62,13 @@ public class LinProger {
         this.f = f;
         tempF = Arrays.copyOf(f, f.length);
         setTableau();
+        checkMode();
+    }
+
+    public void setSolF(double solF) {
+        this.solF = solF;
+        setTableau();
+        checkMode();
     }
 
     public void setA(int index, double[] rowA) {
@@ -77,8 +86,9 @@ public class LinProger {
         setTableau();
     }
 
-    public void initialize(double[] f, double[] m, double[][] a, double[] b) {
+    public void initialize(double[] f, double solF, double[] m, double[][] a, double[] b) {
         this.f = f;
+        this.solF = solF;
         this.m = m;
         this.a = a;
         this.b = b;
@@ -118,7 +128,8 @@ public class LinProger {
                 rowZ[i] = 0;
             }else {
                 // initial solution of f = 0
-                rowZ[i] = 0;
+                //System.out.println(solF);
+                rowZ[i] = solF;
             }
         }
 
@@ -149,7 +160,7 @@ public class LinProger {
                 rowM[i] = 0;
             }else {
                 // initial solution of rowM = solM
-                rowZ[i] = 0;
+                rowM[i] = 0;
             }
         }
 
@@ -209,8 +220,6 @@ public class LinProger {
     }
 
     public void showTableau() {
-
-
         showTableau(displayZ, rowM, rowS);
     }
 
