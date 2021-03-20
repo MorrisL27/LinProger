@@ -218,6 +218,8 @@ public class LinProger {
 
         // for min
         //boolean finish = false;
+        double optimum = 0;
+
         while(true) {
             boolean allNegative = true;
             double max = -1;
@@ -252,6 +254,7 @@ public class LinProger {
 
             if (allNegative) {
                 //finish = true;
+                optimum = rowZ[rowZ.length - 1];
                 break;
             }
 
@@ -309,6 +312,9 @@ public class LinProger {
             showTableau(rowZ, rowM, rowS);
             //showTableau(rowZ, rowM, this.rowS);
         }
+
+        System.out.println("Optimal value " + optimum + " has found.\n");
+
     }
 
     public void run() {

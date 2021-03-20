@@ -155,13 +155,16 @@ public class Main {
 
                             case "aeq":
                                 break;
+
                             case "beq":
                                 break;
 
                             case "lb":
                                 break;
+
                             case "ub":
                                 break;
+
                             default:
                                 System.out.println("Variable not exists.");
                         }
