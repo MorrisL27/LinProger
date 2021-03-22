@@ -84,7 +84,7 @@ public class LinProger {
         setTableau();
     }
 
-    public void setfM(double[] m) {
+    public void setFM(double[] m) {
         this.m = m;
         tempM = Arrays.copyOf(m, m.length);
         setTableau();

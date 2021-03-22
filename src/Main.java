@@ -55,7 +55,7 @@ public class Main {
                                 break;
 
                             case "stat":
-                                System.out.println( "Display the status of variables and matrices.\n");
+                                System.out.println("Display the status of variables and matrices.\n");
                                 //System.out.println("STAT\n" + "STAT [variable]\n");
                                 //System.out.println("variable\t\n");
                                 System.out.println("STAT\n");
@@ -86,7 +86,7 @@ public class Main {
                     double[] entries;
 
                     if (s.length == 2) {
-                        switch(row) {
+                        switch (row) {
                             case "a":
                                 // update the whole matrix A
                                 numCons = Nina.getNumCons();
@@ -103,7 +103,7 @@ public class Main {
 
                                     if (entries.length == numVar) {
                                         Nina.setA(i, entries);
-                                    }else {
+                                    } else {
                                         System.out.println("Illegal number of arguments.\n");
                                         System.out.println(row + " should contain " + numVar + " entries.\n");
                                         break;
@@ -127,7 +127,7 @@ public class Main {
                                 if (entries.length == (numVar + 1)) {
                                     Nina.setF(Arrays.copyOf(entries, entries.length - 1));
                                     Nina.setSolF(entries[entries.length - 1]);
-                                }else {
+                                } else {
                                     System.out.println("Illegal number of arguments.\n");
                                     System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
                                     break;
@@ -136,6 +136,24 @@ public class Main {
                                 break;
 
                             case "fm":
+                                entries = fetchRow(row);
+
+                                if (entries == null) {
+                                    System.out.println("Update failed.\n");
+                                    break;
+                                }
+
+                                numVar = Nina.getNumVar();
+
+                                if (entries.length == (numVar + 1)) {
+                                    Nina.setFM(Arrays.copyOf(entries, entries.length - 1));
+                                    Nina.setSolM(entries[entries.length - 1]);
+                                } else {
+                                    System.out.println("Illegal number of arguments.\n");
+                                    System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
+                                    break;
+                                }
+                                System.out.println("Update " + row + " successfully.\n");
                                 break;
 
                             case "b":
@@ -150,7 +168,7 @@ public class Main {
 
                                 if (entries.length == numCons) {
                                     Nina.setB(entries);
-                                }else {
+                                } else {
                                     System.out.println("Illegal number of arguments.\n");
                                     System.out.println(row + " should contain " + numCons + " entries.\n");
                                     break;
@@ -175,39 +193,42 @@ public class Main {
                         }
 
                         //Nina.showTableau();
-                    }else if (s.length == 3) {
-                        // update a[i - 1] with real index i
+                    } else if (s.length == 3) {
+                        if (s[1].equals("a")) {
+                            // update a[i - 1] with real index i
 
-                        int index;
-                        try {
-                            index = Integer.parseInt(s[2]) - 1;
-                        } catch (Exception e){
-                            System.out.println("Row number is not a number.\n");
-                            break;
-                        }
+                            int index;
+                            try {
+                                index = Integer.parseInt(s[2]) - 1;
+                            } catch (Exception e) {
+                                System.out.println("Row number is not a number.\n");
+                                break;
+                            }
 
-                        entries = fetchRow(row);
+                            entries = fetchRow(row);
 
-                        if (entries == null) {
-                            System.out.println("Update failed.\n");
-                            break;
-                        }
+                            if (entries == null) {
+                                System.out.println("Update failed.\n");
+                                break;
+                            }
 
-                        numVar = Nina.getNumVar();
+                            numVar = Nina.getNumVar();
 
-                        if (entries.length == numVar) {
-                            Nina.setA(index, entries);
+                            if (entries.length == numVar) {
+                                Nina.setA(index, entries);
+                            } else {
+                                System.out.println("Illegal number of arguments.\n");
+                                System.out.println(row + " should contain " + numVar + " entries.\n");
+                                break;
+                            }
+                            System.out.println("Update " + row + " successfully.\n");
                         }else {
-                            System.out.println("Illegal number of arguments.\n");
-                            System.out.println(row + " should contain " + numVar + " entries.\n");
-                            break;
+                            System.out.println("Variable not exists.");
                         }
-                        System.out.println("Update " + row + " successfully.\n");
-                    }else {
+                    } else {
                         System.out.println("Illegal number of arguments.\n");
                     }
                     break;
-
                 case "stat":
                     if (s.length == 1) {
                         System.out.println("Current status: ");
