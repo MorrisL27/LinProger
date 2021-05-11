@@ -364,6 +364,6 @@ public class Main {
         double[] m = new double[] {-7, -4, 1};
         double[] b = new double[] {3, 6, 4};
 
-        Nina.initialize(f, 0, m, 9, a, b);
+        Nina.initialize(f, 10, m, 9, a, b);
     }
 }

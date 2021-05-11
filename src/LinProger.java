@@ -5,6 +5,7 @@ public class LinProger {
     private double[] rowZ;
     private double[] displayZ;
     private double[] rowM;
+    private double[] displayM;
     private double[][] rowS;
 
     private double[] tempF;
@@ -22,6 +23,9 @@ public class LinProger {
 
     private double solF;
     private double solM;
+
+    private double tempSolF;
+    private double tempSolM;
 
     private int numVar;
     private int numCons;
@@ -69,12 +73,14 @@ public class LinProger {
 
     public void setSolF(double solF) {
         this.solF = solF;
+        tempSolF = solF;
         setTableau();
         checkMode();
     }
 
     public void setSolM(double solM) {
         this.solM = solM;
+        tempSolM = solM;
         setTableau();
         checkMode();
     }
@@ -106,6 +112,9 @@ public class LinProger {
 
         tempF = Arrays.copyOf(f, f.length);
         tempM = Arrays.copyOf(m, m.length);
+
+        tempSolF = solF;
+        tempSolM = solM;
 
         setTableau();
 
@@ -144,7 +153,7 @@ public class LinProger {
             }else {
                 // initial solution of f = 0
                 //System.out.println(solF);
-                rowZ[i] = solF;
+                rowZ[i] = tempSolF;
             }
         }
 
@@ -160,7 +169,8 @@ public class LinProger {
                 rowM[i] = 0;
             }else {
                 // initial solution of rowM = solM
-                rowM[i] = solM;
+                //rowM[i] = solM;
+                rowM[i] = tempSolM;
             }
         }
 
@@ -244,7 +254,8 @@ public class LinProger {
     }
 
     public void showTableau() {
-        showTableau(displayZ, rowM, rowS);
+        showTableau(displayZ, displayM, rowS);
+        //showTableau(rowZ, rowM, rowS);
     }
 
     private void showTableau(double[] rowZ, double[] rowM, double[][] rowS) {
@@ -393,11 +404,12 @@ public class LinProger {
 
             str.add("max: " + max + "; Min: " + min);
 
-            //showTableau(rowZ, rowM, this.rowS);
+
             for (String s : str) {
                 System.out.println(s);
             }
             System.out.println();
+
 
             // rowZ has been updated, also update displayZ
             if (modeMax) {
@@ -413,7 +425,23 @@ public class LinProger {
                 displayZ = Arrays.copyOf(rowZ, rowZ.length);
             }
 
-            showTableau(displayZ, rowM, rowS);
+            // rowM has been updated, also update displayM
+            if (modeMax) {
+                // set displayM
+                for (int i = 0; i < displayM.length; i++) {
+                    if (rowM[i] != 0) {
+                        displayM[i] = -rowM[i];
+                    }else {
+                        displayM[i] = 0;
+                    }
+                }
+            }else {
+                displayM = Arrays.copyOf(rowM, rowM.length);
+            }
+
+            showTableau(displayZ, displayM, rowS);
+
+            //showTableau(rowZ, rowM, rowS);
             //System.out.println();
         }
 
@@ -454,6 +482,7 @@ public class LinProger {
                 }
             }
 
+            // set tempM to -m
             for (int i = 0; i < tempM.length; i++) {
                 if (m[i] != 0) {
                     tempM[i] = -m[i];
@@ -461,6 +490,20 @@ public class LinProger {
                     tempM[i] = 0;
                 }
             }
+
+            if (solF != 0) {
+                tempSolF = -solF;
+            }else {
+                tempSolF = 0;
+            }
+
+            if (solM != 0) {
+                tempSolM = -solM;
+            }else {
+                tempSolM = 0;
+            }
+
+            setTableau();
 
             // set displayZ
             for (int i = 0; i < displayZ.length; i++) {
@@ -471,33 +514,24 @@ public class LinProger {
                 }
             }
 
-            /*
-            // set displayZ by tempF and tempM
-            for (int i = 0; i < displayZ.length; i++) {
-                if (i < numVar) {
-                    if (tempF[i]!=0) {
-                        rowZ[i] = -tempF[i];
-                    }else {
-                        rowZ[i] = tempF[i];
-                    }
-                }else if (i < numVar + numCons) {
-                    rowZ[i] = 0;
+            // set displayM
+            for (int i = 0; i < displayM.length; i++) {
+                if (rowM[i] != 0) {
+                    displayM[i] = -rowM[i];
                 }else {
-                    // initial solution of f = 0
-                    //System.out.println(solF);
-                    rowZ[i] = solF;
+                    displayM[i] = 0;
                 }
             }
-            */
-
-
-            setTableau();
         }else {
             // sync tempF to f
             tempF = Arrays.copyOf(f, f.length);
             tempM = Arrays.copyOf(m, m.length);
-            displayZ = Arrays.copyOf(rowZ, rowZ.length);
+            tempSolF = solF;
+            tempSolM = solM;
+
             setTableau();
+            displayZ = Arrays.copyOf(rowZ, rowZ.length);
+            displayM = Arrays.copyOf(rowM, rowM.length);
         }
     }
 
