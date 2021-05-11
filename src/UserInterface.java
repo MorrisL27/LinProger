@@ -403,154 +403,26 @@ public class UserInterface {
         a[3] = new double[] {1, 2};
         b = new double[] {3, -3, -6, 4};
 
-
-
-        // rearrange here
-        double[][] oldA;
-        double[] oldB;
-
-        oldA = Arrays.copyOf(a, a.length);
-        a = new double[numCons][numVar];
-        oldB = Arrays.copyOf(b, b.length);
-        b = new double[numCons];
-
-        int indexRe = 0;
-        for (int i = 0; i < b.length; i++) {
-            if (oldB[i] < 0) {
-                for (int j = 0; j < a[i].length; j++) {
-                    a[indexRe][j] = oldA[i][j];
-                    b[indexRe] = oldB[i];
-                }
-                indexRe++;
-            }
-        }
-
-        for (int i = 0; i < b.length; i++) {
-            if (oldB[i] >= 0) {
-                for (int j = 0; j < a[i].length; j++) {
-                    a[indexRe][j] = oldA[i][j];
-                    b[indexRe] = oldB[i];
-                }
-                indexRe++;
-            }
-        }
-
-
-        solM = 0;
-        int numNegB = 0;
-        for (int i = 0; i < b.length; i++) {
-            if (b[i] < 0) {
-                numNegB++;
-                solM -= b[i];
-            }
-        }
-        //solM = 9;
-        System.out.println("SolM: " + solM);
-
-        //numVar = 4; // numVar += numNegB
-        numVar += numNegB;
-        numCons = 4;
-        //numSol = 1;
-        solF = 10;
-
-        m = new double[numVar];
-        for (int i = 0; i < b.length; i++) {
-            if (b[i] < 0) {
-                for (int j = 0; j < m.length; j++) {
-                    if (j < numVar-numNegB) {
-                        m[j] += a[i][j];
-                    }else {
-                        m[j] = 1;
-                    }
-                }
-            }
-        }
-        //m = new double[] {-7, -4, 1, 1};
-        System.out.print("M: ");
-        for (double num : m) {
-            System.out.print(num + " ");
-        }
-        System.out.println("SolM: " + solM);
-
-
-
-
-        double[] oldF = Arrays.copyOf(f, f.length);
-        //f = new double[] {4, 1, 0, 0};
-
-        f = new double[numVar];
-
-        for (int i = 0; i < f.length; i++) {
-            if (i < numVar-numNegB) {
-                f[i] = oldF[i];
-            }
-        }
-
-//        System.out.print("f: ");
-//        for (double num : f) {
-//            System.out.print(num + " ");
-//        }
-
-
-
-        oldA = Arrays.copyOf(a, a.length);
-        a = new double[numCons][numVar];
-
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < a[i].length; j++) {
-                if (j < numVar-numNegB) {
-                    if (b[i] < 0) {
-                        a[i][j] = -oldA[i][j];
-                    }else {
-                        a[i][j] = oldA[i][j];
-                    }
-                }else {
-                    if (b[i] < 0) {
-                        if (j - i == (numVar-numNegB)) {
-                            a[i][j] = -1;
-                        }else {
-                            a[i][j] = 0;
-                        }
-                    }else {
-                        a[i][j] = 0;
-                    }
-                }
-                //System.out.print(a[i][j] + " ");
-            }
-            //System.out.println();
-        }
-
-
-        for (int i = 0; i < b.length; i++) {
-                if (b[i] < 0) {
-                    b[i] = -b[i];
-                }
-            //System.out.print(a[i][j] + " ");
-        }
-
-//        System.out.print("b: ");
-//        for (double num : b) {
-//            System.out.print(num + " ");
-//        }
-
-
-        /*
-        a[0] = new double[] {3, 1, 0, 0};
-        a[1] = new double[] {-(-3), -(-1), -1, 0};// b < 0
-        a[2] = new double[] {-(-4), -(-3), 0, -1};// b < 0
-        a[3] = new double[] {1, 2, 0, 0};
-        b = new double[] {3, -(-3), -(-6), 4};
-        */
-
-
-
         // describe a problem here.
-        //initialize(numVar, numCons, f, solF, m, solM, a, b);
+        tempSolF = solF;
+        tempNumCons = numCons;
+        //numSol = 1;
+        //tempNumVar = numVar;
+        tempF = Arrays.copyOf(f, f.length);
+        tempA = Arrays.copyOf(a, a.length);
+        tempB = Arrays.copyOf(b, b.length);
 
+        initialize(tempF, tempA, tempB);
         showProblem();
 
-        Nina.setDimension(numVar, numCons);
-        Nina.initialize(f, solF, m, solM, a, b);
+        System.out.print("tempF: ");
+        for (double num : tempF) {
+            System.out.print(num + " ");
+        }
+
+
+        Nina.setDimension(tempNumVar, tempNumCons);
+        Nina.initialize(tempF, tempSolF, tempM, tempSolM, tempA, tempB);
     }
 
     public static void showProblem() {
@@ -591,13 +463,117 @@ public class UserInterface {
         System.out.println();
     }
 
-    public static void initialize(double numVar, double numCons, double[] f, double solF, double[] m, double solM, double[][] a, double[] b) {
-        showProblem();
+    public static void initialize(double[] f, double[][] a, double[] b) {
+        // rearrange here
+        double[][] oldA;
+        double[] oldB;
+
+        oldA = Arrays.copyOf(a, a.length);
+        a = new double[numCons][numVar];
+        oldB = Arrays.copyOf(b, b.length);
+        b = new double[numCons];
+
+        int indexRe = 0;
+        for (int i = 0; i < b.length; i++) {
+            if (oldB[i] < 0) {
+                for (int j = 0; j < a[i].length; j++) {
+                    a[indexRe][j] = oldA[i][j];
+                    b[indexRe] = oldB[i];
+                }
+                indexRe++;
+            }
+        }
+
+        for (int i = 0; i < b.length; i++) {
+            if (oldB[i] >= 0) {
+                for (int j = 0; j < a[i].length; j++) {
+                    a[indexRe][j] = oldA[i][j];
+                    b[indexRe] = oldB[i];
+                }
+                indexRe++;
+            }
+        }
+
+
+        tempSolM = 0;
+        int numNegB = 0;
+        for (int i = 0; i < b.length; i++) {
+            if (b[i] < 0) {
+                numNegB++;
+                tempSolM -= b[i];
+            }
+        }
+        //solM = 9;
+        System.out.println("TempSolM: " + tempSolM);
+
+        //numVar = 4; // numVar += numNegB
+        tempNumVar = numVar;
+        tempNumVar += numNegB;
+        //numCons = 4;
+        //numSol = 1;
+        //solF = 10;
+
+        tempM = new double[tempNumVar];
+        for (int i = 0; i < b.length; i++) {
+            if (b[i] < 0) {
+                for (int j = 0; j < tempM.length; j++) {
+                    if (j < tempNumVar-numNegB) {
+                        tempM[j] += a[i][j];
+                    }else {
+                        tempM[j] = 1;
+                    }
+                }
+            }
+        }
+
+        double[] oldF = Arrays.copyOf(f, f.length);
+
+        f = new double[tempNumVar];
+
+        for (int i = 0; i < f.length; i++) {
+            if (i < tempNumVar-numNegB) {
+                f[i] = oldF[i];
+            }
+        }
+
+        oldA = Arrays.copyOf(a, a.length);
+        a = new double[numCons][tempNumVar];
+
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                if (j < tempNumVar-numNegB) {
+                    if (b[i] < 0) {
+                        a[i][j] = -oldA[i][j];
+                    }else {
+                        a[i][j] = oldA[i][j];
+                    }
+                }else {
+                    if (b[i] < 0) {
+                        if (j - i == (tempNumVar-numNegB)) {
+                            a[i][j] = -1;
+                        }else {
+                            a[i][j] = 0;
+                        }
+                    }else {
+                        a[i][j] = 0;
+                    }
+                }
+            }
+        }
 
         for (int i = 0; i < b.length; i++) {
             if (b[i] < 0) {
-
+                b[i] = -b[i];
             }
+        }
+
+        tempA = Arrays.copyOf(a, a.length);
+        tempB = Arrays.copyOf(b, b.length);
+        tempF = Arrays.copyOf(f, f.length);
+
+        System.out.print("innerF: ");
+        for (double num : f) {
+            System.out.print(num + " ");
         }
     }
 }
