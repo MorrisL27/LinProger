@@ -35,6 +35,8 @@ public class LinProger {
     // false: min mode
     // true: max mode
 
+    private int numNegB;
+
     public static void main(String[] args) {
         new LinProger().run();
     }
@@ -100,6 +102,11 @@ public class LinProger {
     public void setB(double[] b) {
         this.b = b;
         setTableau();
+    }
+
+    public void setNumNegB(int numNegB) {
+        this.numNegB = numNegB;
+        //setTableau();
     }
 
     public void initialize(double[] f, double solF, double[] m, double solM, double[][] a, double[] b) {
@@ -262,11 +269,13 @@ public class LinProger {
         System.out.print("Basic ");
 
         for (int i = 0; i < numVar; i++) {
-            System.out.printf(" %-9s", "x" + (i + 1));
+            //System.out.printf(" %-9s", "x" + (i + 1));
+            System.out.printf(" %-9s", findVariable(i));
         }
 
         for (int i = 0; i < numCons; i++) {
-            System.out.printf(" %-9s", "s" + (i + 1));
+            //System.out.printf(" %-9s", "s" + (i + 1));
+            System.out.printf(" %-9s", findVariable(i + numVar));
         }
 
         System.out.println(" Solution");
@@ -559,10 +568,14 @@ public class LinProger {
     private String findVariable(int id) {
         if (id < 0) {
             return "";
-        }else if (id < numVar) {
+        }else if (id < numVar - numNegB) {
             return "x" + (id + 1);
+        }else if (id < numVar) {
+            return "μ" + (id + 1 - (numVar - numNegB));
+        }else if (id < numVar + numNegB) {
+            return "t" + (id + 1 - numVar);
         }else if (id < numVar + numCons) {
-            return "s" + (id + 1 - numVar);
+            return "s" + (id + 1 - (numVar + numNegB));
         }else {
             return "";
         }

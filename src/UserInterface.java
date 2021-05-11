@@ -32,6 +32,8 @@ public class UserInterface {
     static double tempSolF;
     static double tempSolM;
 
+    static int tempNumNegB;
+
     static boolean initialized = false;
 
     public static void main(String[] args) {
@@ -530,6 +532,7 @@ public class UserInterface {
         initialize(tempF, tempA, tempB);
 
         Nina.setDimension(tempNumVar, tempNumCons);
+        Nina.setNumNegB(tempNumNegB);
         Nina.initialize(tempF, tempSolF, tempM, tempSolM, tempA, tempB);
     }
 
@@ -684,6 +687,7 @@ public class UserInterface {
         tempA = Arrays.copyOf(a, a.length);
         tempB = Arrays.copyOf(b, b.length);
         tempF = Arrays.copyOf(f, f.length);
+        tempNumNegB = numNegB;
     }
 
     public static void setA(int index, double[] rowA) {
