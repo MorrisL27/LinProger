@@ -10,6 +10,8 @@ public class LinProger {
 
     private String[] rowZRational;
     private String[] rowMRational;
+    private String[] rowZRationalDisplay;
+    private String[] rowMRationalDisplay;
     private String[][] rowSRational;
 
     private double[] tempF;
@@ -46,16 +48,7 @@ public class LinProger {
     }
 
     public LinProger() {
-        // default initialization
-//        numVar = 4;
-//        numCons = 4;
-        //numSol = 1;
-//        setDimension(numVar, numCons);
-//        setDefaultValue();
-
         modeMax = false;// min mode initially
-
-        //setTableau();
     }
 
     public int getNumVar() {
@@ -257,6 +250,8 @@ public class LinProger {
 
     public void showTableau() {
         showTableau(displayZ, displayM, rowS);
+        showTableau(rowZRationalDisplay, rowMRationalDisplay, rowSRational);
+        //showTableau(rowZRational, rowMRational, rowSRational);
         //showTableau(rowZ, rowM, rowS);
     }
 
@@ -339,7 +334,6 @@ public class LinProger {
 
     private void linProg(double[] rowZ, double[] rowM, double[][] rowS) {
         showTableau();
-        showTableau(rowZRational, rowMRational, rowSRational);
 
         // for min
         //boolean finish = false;
@@ -503,9 +497,53 @@ public class LinProger {
                 displayM = Arrays.copyOf(rowM, rowM.length);
             }
 
+            // rowZRatioanl has been updated, also update rowZRationalDisplay
+            if (modeMax) {
+                // set rowZRationalDisplay
+                for (int i = 0; i < rowZRationalDisplay.length; i++) {
+                    if (!rowZRational[i].equals("0")) {
+                        if (rowZRational[i].charAt(0) != '-') {
+                            rowZRationalDisplay[i] = "-" + rowZRational[i];
+                        }else {
+                            rowZRationalDisplay[i] = rowZRational[i].substring(1);
+                        }
+                    }else {
+                        rowZRationalDisplay[i] = rowZRational[i];
+                    }
+                }
+            }else {
+                // set rowZRationalDisplay
+                rowZRationalDisplay = new String[rowZRational.length];
+                for (int i = 0; i < rowZRationalDisplay.length; i++) {
+                    rowZRationalDisplay[i] = rowZRational[i];
+                }
+            }
+
+            // rowMRational has been updated, also update rowMRationalDisplay
+            if (modeMax) {
+                // set rowMRationalDisplay
+                for (int i = 0; i < rowMRationalDisplay.length; i++) {
+                    if (!rowMRational[i].equals("0")) {
+                        if (rowMRational[i].charAt(0) != '-') {
+                            rowMRationalDisplay[i] = "-" + rowMRational[i];
+                        }else {
+                            rowMRationalDisplay[i] = rowMRational[i].substring(1);
+                        }
+                    }else {
+                        rowMRationalDisplay[i] = rowMRational[i];
+                    }
+                }
+            }else {
+                // set rowMRationalDisplay
+                rowMRationalDisplay = new String[rowMRational.length];
+                for (int i = 0; i < rowMRationalDisplay.length; i++) {
+                    rowMRationalDisplay[i] = rowMRational[i];
+                }
+            }
+
             //showTableau(displayZ, displayM, rowS);
             showTableau(displayZ, displayM, rowS);
-            showTableau(rowZRational, rowMRational, rowSRational);
+            showTableau(rowZRationalDisplay, rowMRationalDisplay, rowSRational);
 
             //showTableau(rowZ, rowM, rowS);
             //System.out.println();
@@ -589,6 +627,32 @@ public class LinProger {
                     displayM[i] = 0;
                 }
             }
+
+            // set rowZRationalDisplay
+            for (int i = 0; i < rowZRationalDisplay.length; i++) {
+                if (!rowZRational[i].equals("0")) {
+                    if (rowZRational[i].charAt(0) != '-') {
+                        rowZRationalDisplay[i] = "-" + rowZRational[i];
+                    }else {
+                        rowZRationalDisplay[i] = rowZRational[i].substring(1);
+                    }
+                }else {
+                    rowZRationalDisplay[i] = rowZRational[i];
+                }
+            }
+
+            // set rowMRationalDisplay
+            for (int i = 0; i < rowMRationalDisplay.length; i++) {
+                if (!rowMRational[i].equals("0")) {
+                    if (rowMRational[i].charAt(0) != '-') {
+                        rowMRationalDisplay[i] = "-" + rowMRational[i];
+                    }else {
+                        rowMRationalDisplay[i] = rowMRational[i].substring(1);
+                    }
+                }else {
+                    rowMRationalDisplay[i] = rowMRational[i];
+                }
+            }
         }else {
             // sync tempF to f
             tempF = Arrays.copyOf(f, f.length);
@@ -599,6 +663,18 @@ public class LinProger {
             setTableau();
             displayZ = Arrays.copyOf(rowZ, rowZ.length);
             displayM = Arrays.copyOf(rowM, rowM.length);
+
+            // set rowZRationalDisplay
+            rowZRationalDisplay = new String[rowZRational.length];
+            for (int i = 0; i < rowZRationalDisplay.length; i++) {
+                rowZRationalDisplay[i] = rowZRational[i];
+            }
+
+            // set rowMRationalDisplay
+            rowMRationalDisplay = new String[rowMRational.length];
+            for (int i = 0; i < rowMRationalDisplay.length; i++) {
+                rowMRationalDisplay[i] = rowMRational[i];
+            }
         }
     }
 

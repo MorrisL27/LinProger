@@ -354,6 +354,12 @@ public class UserInterface {
                     if (s.length == 1) {
                         transform();
 
+                        if (modeMax) {
+                            Nina.modeMax();
+                        } else {
+                            Nina.modeMin();
+                        }
+
                         initialized = true;
                         System.out.println("Nina initialized.\n");
                     } else {
@@ -364,11 +370,6 @@ public class UserInterface {
                 case "run":
                     if (s.length == 1) {
                         if (initialized) {
-                            if (modeMax) {
-                                Nina.modeMax();
-                            } else {
-                                Nina.modeMin();
-                            }
                             showBigM();
                             Nina.run();
                         }else {
