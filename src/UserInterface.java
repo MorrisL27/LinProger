@@ -20,6 +20,7 @@ public class UserInterface {
     static double[] b;
     static double solF;
     static double solM;
+    static boolean modeMax;
 
     // parameters for LinProger
     static int tempNumVar;
@@ -58,6 +59,7 @@ public class UserInterface {
             switch (option) {
                 case "help":
                     if (s.length == 1) {
+                        System.out.printf("%-15s%s", "PROB", "Display the current problem.\n");
                         System.out.printf("%-15s%s", "DEF", "Define the dimension of the problem.\n");
                         System.out.printf("%-15s%s", "VAR", "Modify the value of that variable.\n");
                         System.out.printf("%-15s%s", "STAT", "Display the status of variables and matrices.\n");
@@ -99,6 +101,16 @@ public class UserInterface {
                                 System.out.println();
                                 break;
 
+                            case "prob":
+                                System.out.println("Display the current problem.\n");
+                                //System.out.println("STAT\n" + "STAT [variable]\n");
+                                //System.out.println("variable\t\n");
+                                System.out.println("PROB\n");
+                                //System.out.printf("%-15s%s", "variable", "the variable you want to show the status.\n");
+
+                                System.out.println();
+                                break;
+
                             case "run":
                                 System.out.println("Calculate and display the tableau step by step.\n");
                                 System.out.println("RUN MIN");
@@ -124,6 +136,7 @@ public class UserInterface {
                         if (s.length == 2) {
                             switch (row) {
                                 case "a":
+
                                     // update the whole matrix A
                                     numCons = Nina.getNumCons();
 
@@ -151,12 +164,27 @@ public class UserInterface {
 
 
                                 case "f":
+
                                     entries = fetchRow(row);
 
                                     if (entries == null) {
                                         System.out.println("Update failed.\n");
                                         break;
                                     }
+
+                                    // buffer f in Main
+/*
+                                    if (entries.length == (numVar + 1)) {
+                                        Nina.setF(Arrays.copyOf(entries, entries.length - 1));
+                                        Nina.setSolF(entries[entries.length - 1]);
+                                    } else {
+                                        System.out.println("Illegal number of arguments.\n");
+                                        System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
+                                        break;
+                                    }
+
+ */
+
 
                                     numVar = Nina.getNumVar();
 
@@ -168,6 +196,8 @@ public class UserInterface {
                                         System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
                                         break;
                                     }
+
+
                                     System.out.println("Update " + row + " successfully.\n");
                                     break;
 
@@ -285,15 +315,34 @@ public class UserInterface {
                     }
                     break;
 
+                case "prob":
+                    if (s.length == 1) {
+                        /*
+                        System.out.println("Current status: ");
+                        if (Nina.getMode()) {
+                            System.out.println("mode: Max");
+                        }else {
+                            System.out.println("mode: Min");
+                        }*/
+
+                        showProblem();
+                        System.out.println();
+                    } else {
+                        System.out.println("Illegal number of arguments.\n");
+                    }
+                    break;
+
                 case "run":
                     if (s.length == 2) {
                         String mode = s[1].toLowerCase();
                         switch(mode) {
                             case "max":
+                                modeMax = true;
                                 Nina.modeMax();
                                 Nina.run();
                                 break;
                             case "min":
+                                modeMax = false;
                                 Nina.modeMin();
                                 Nina.run();
                                 break;
@@ -391,6 +440,7 @@ public class UserInterface {
 //        solF = 10;
 //        solM = 9;
 
+        modeMax = false;
         solF = 10;
         numCons = 4;
         //numSol = 1;
@@ -413,12 +463,12 @@ public class UserInterface {
         tempB = Arrays.copyOf(b, b.length);
 
         initialize(tempF, tempA, tempB);
-        showProblem();
-
-        System.out.print("tempF: ");
-        for (double num : tempF) {
-            System.out.print(num + " ");
-        }
+        //showProblem();
+//
+//        System.out.print("tempF: ");
+//        for (double num : tempF) {
+//            System.out.print(num + " ");
+//        }
 
 
         Nina.setDimension(tempNumVar, tempNumCons);
@@ -426,6 +476,12 @@ public class UserInterface {
     }
 
     public static void showProblem() {
+        if (modeMax) {
+            System.out.print("max ");
+        }else {
+            System.out.print("min ");
+        }
+
         String lineF = "z = ";
         for (int i = 0; i < f.length; i++) {
             if (f[i] < 0) {
@@ -460,7 +516,7 @@ public class UserInterface {
             System.out.println(lineA);
             lineA = "";
         }
-        System.out.println();
+        //System.out.println();
     }
 
     public static void initialize(double[] f, double[][] a, double[] b) {
@@ -571,9 +627,9 @@ public class UserInterface {
         tempB = Arrays.copyOf(b, b.length);
         tempF = Arrays.copyOf(f, f.length);
 
-        System.out.print("innerF: ");
-        for (double num : f) {
-            System.out.print(num + " ");
-        }
+//        System.out.print("innerF: ");
+//        for (double num : f) {
+//            System.out.print(num + " ");
+//        }
     }
 }
