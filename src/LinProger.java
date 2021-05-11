@@ -262,11 +262,11 @@ public class LinProger {
         System.out.print("Basic ");
 
         for (int i = 0; i < numVar; i++) {
-            System.out.printf(" %-5s", "x" + (i + 1));
+            System.out.printf(" %-9s", "x" + (i + 1));
         }
 
         for (int i = 0; i < numCons; i++) {
-            System.out.printf(" %-5s", "s" + (i + 1));
+            System.out.printf(" %-9s", "s" + (i + 1));
         }
 
         System.out.println(" Solution");
@@ -275,13 +275,13 @@ public class LinProger {
         // check z
         System.out.print("z     ");
         for (int i = 0; i < rowZ.length; i++) {
-            System.out.printf(" %+.2f", rowZ[i]);
+            System.out.printf(" %-+9.4f", rowZ[i]);
         }
         System.out.println();
 
         System.out.print("M     ");
         for (int i = 0; i < rowM.length; i++) {
-            System.out.printf(" %+.2f", rowM[i]);
+            System.out.printf(" %-+9.4f", rowM[i]);
         }
         System.out.println();
 
@@ -290,7 +290,7 @@ public class LinProger {
             System.out.print(findVariable(bases[j]) + "    ");
             //System.out.print("S[" + (j + 1) + "]  ");
             for (int i = 0; i < rowS[0].length; i++) {
-                System.out.printf(" %+.2f", rowS[j][i]);
+                System.out.printf(" %-+9.4f", rowS[j][i]);
             }
             System.out.println();
         }
