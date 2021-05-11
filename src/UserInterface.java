@@ -613,16 +613,16 @@ public class UserInterface {
                 for (int j = 0; j < a[i].length; j++) {
                     double ai = -oldA[i][j];
                     if (ai < 0) {
-                        lineMiu += "- " + (-ai) + "x" + (i+1) + " ";
+                        lineMiu += "- " + (-ai) + "x" + (j+1) + " ";
                     }else {
-                        lineMiu += "+ " + ai + "x" + (i+1) + " ";
+                        lineMiu += "+ " + ai + "x" + (j+1) + " ";
                     }
 
                     ai = oldA[i][j];
                     if (ai < 0) {
-                        lineT += "- " + (-ai) + "x" + (i+1) + " ";
+                        lineT += "- " + (-ai) + "x" + (j+1) + " ";
                     }else {
-                        lineT += "+ " + ai + "x" + (i+1) + " ";
+                        lineT += "+ " + ai + "x" + (j+1) + " ";
                     }
                 }
                 double bi = oldB[i];
