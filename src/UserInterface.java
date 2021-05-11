@@ -34,7 +34,10 @@ public class UserInterface {
 
     static int tempNumNegB;
 
-    static boolean initialized = false;
+    static boolean initialized;
+
+    static String lineMiu;
+    static String lineT;
 
     public static void main(String[] args) {
         //new LinProger().linProg();
@@ -366,6 +369,7 @@ public class UserInterface {
                             } else {
                                 Nina.modeMin();
                             }
+                            showBigM();
                             Nina.run();
                         }else {
                             System.out.println("Nina not initialized by new problem!\n");
@@ -515,6 +519,7 @@ public class UserInterface {
         b = new double[] {3, -3, -6, 4};
 
         transform();
+        //showBigM();
 
         initialized = true;
     }
@@ -552,7 +557,7 @@ public class UserInterface {
             }
         }
         if (solF < 0) {
-            lineF += solF;
+            lineF += "- " + (-solF);
         }else {
             lineF += "+ " + solF;
         }
@@ -591,12 +596,52 @@ public class UserInterface {
         b = new double[numCons];
 
         int indexRe = 0;
+        // show line i applied Big-M
+        lineMiu = "";
+        lineT = "";
         for (int i = 0; i < b.length; i++) {
             if (oldB[i] < 0) {
                 for (int j = 0; j < a[i].length; j++) {
                     a[indexRe][j] = oldA[i][j];
                     b[indexRe] = oldB[i];
                 }
+
+                int index = (indexRe+1);
+                // show line i applied Big-M
+                lineMiu += "μ" + index + " = ";
+                lineT += "t" + index + " = ";
+                for (int j = 0; j < a[i].length; j++) {
+                    double ai = -oldA[i][j];
+                    if (ai < 0) {
+                        lineMiu += "- " + (-ai) + "x" + (i+1) + " ";
+                    }else {
+                        lineMiu += "+ " + ai + "x" + (i+1) + " ";
+                    }
+
+                    ai = oldA[i][j];
+                    if (ai < 0) {
+                        lineT += "- " + (-ai) + "x" + (i+1) + " ";
+                    }else {
+                        lineT += "+ " + ai + "x" + (i+1) + " ";
+                    }
+                }
+                double bi = oldB[i];
+                if (bi < 0) {
+                    lineMiu += "- " + (-bi) + "\n";
+                }else {
+                    lineMiu += "+ " + bi + "\n";
+                }
+
+                bi = -bi;
+
+                lineT += "+ μ" + index + " ";
+
+                if (bi < 0) {
+                    lineT += "- " + (-bi) + "\n";
+                }else {
+                    lineT += "+ " + bi + "\n";
+                }
+
                 indexRe++;
             }
         }
@@ -620,6 +665,11 @@ public class UserInterface {
                 tempSolM -= b[i];
             }
         }
+
+//        if (numNegB != 0) {
+//            System.out.println("Big-M Technique being applied.");
+//        }
+
         //solM = 9;
         //System.out.println("TempSolM: " + tempSolM);
 
@@ -709,5 +759,13 @@ public class UserInterface {
         m = new double[numVar];
         solF = 0;
         solM = 0;
+    }
+
+    public static void showBigM() {
+        if (!lineMiu.equals("")) {
+            System.out.println("Big-M Technique applied.");
+        }
+        System.out.println(lineMiu);
+        System.out.println(lineT);
     }
 }
