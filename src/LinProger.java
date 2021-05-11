@@ -342,6 +342,7 @@ public class LinProger {
         while(true) {
             boolean allNegative = true;
             double max = -1;
+            String maxRational = "" + -1;
             int entering = -1;
 
             ArrayList<String> str = new ArrayList<>();
@@ -351,6 +352,7 @@ public class LinProger {
                     allNegative = false;
                     if (max <= rowM[i]) {
                         max = rowM[i];
+                        maxRational = rowMRational[i];
                         entering = i;
                     }
                 }
@@ -358,6 +360,7 @@ public class LinProger {
 
             if (allNegative) {
                 max = -1;
+                maxRational = "" + -1;
                 entering = -1;
 
                 for (int i = 0; i < rowZ.length - 1; i++) {
@@ -366,6 +369,7 @@ public class LinProger {
                             allNegative = false;
                             if (max <= rowZ[i]) {
                                 max = rowZ[i];
+                                maxRational = rowZRational[i];
                                 entering = i;
                             }
                         }
@@ -380,13 +384,16 @@ public class LinProger {
             }
 
             int leaving = -1;
-            double min = 100000000000000000.0;
+            double min = 1000000000.0;
+            String minRational = "" + 1000000000;
             for (int i = 0; i < rowS.length; i++) {
                 if (rowS[i][entering] > 0) {
                     double result = rowS[i][rowS[i].length - 1] / rowS[i][entering];
-                    str.add("result = " + rowS[i][rowS[i].length - 1] + "/" + rowS[i][entering] + " = " + result);
+                    String resultRational = pivotOperation(rowSRational[i][rowSRational[i].length - 1], rowSRational[i][entering]);
+                    str.add("result = " + rowSRational[i][rowSRational[i].length - 1] + " ÷ " + rowSRational[i][entering] + " = " + resultRational);
                     if (result < min) {
                         min = result;
+                        minRational = resultRational;
                         leaving = i;
                     }
                 }
@@ -460,7 +467,8 @@ public class LinProger {
             str.add("entering: " + enterVariable + "; leaving: " + leavingVariable);
             swapBases(entering + 1, leaving + 1);
 
-            str.add("max: " + max + "; Min: " + min);
+            //str.add("max: " + max + "; Min: " + min);
+            str.add("max: " + maxRational + "; Min: " + minRational);
 
 
             for (String s : str) {

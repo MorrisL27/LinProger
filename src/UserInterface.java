@@ -519,8 +519,8 @@ public class UserInterface {
 //        a[3] = new double[] {1, 2};
 //        b = new double[] {3, -3, -6, 4};
 
-        modeMax = true;
-        solF = 10;
+        modeMax = false;
+        solF = 0;
         numCons = 3;
         //numSol = 1;
         numVar = 3;
