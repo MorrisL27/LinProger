@@ -396,6 +396,8 @@ public class LinProger {
                         minRational = resultRational;
                         leaving = i;
                     }
+                }else {
+                    str.add("result N/A");
                 }
             }
 
