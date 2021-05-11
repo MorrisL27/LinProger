@@ -435,7 +435,10 @@ public class UserInterface {
                     break;
 
                 case "exit":
-                    System.out.println("See you! \u2708\n");
+                    System.out.println("See you!");
+
+                    // cmd can not recognize Unicode
+                    //System.out.println("See you! \u2708\n");
                     break;
 
                 default:
