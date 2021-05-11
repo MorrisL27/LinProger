@@ -4,8 +4,32 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Main {
+public class UserInterface {
     static LinProger Nina;
+
+    // parameters for original problem
+    static int numVar;
+    static int numCons;
+//    static double[] f = new double[numVar];
+//    static double[][] a = new double[numCons][numVar];
+//    static double[] m = new double[numVar];
+//    static double[] b = new double[numCons];
+    static double[] f;
+    static double[][] a;
+    static double[] m;
+    static double[] b;
+    static double solF;
+    static double solM;
+
+    // parameters for LinProger
+    static int tempNumVar;
+    static int tempNumCons;
+    static double[] tempF;
+    static double[][] tempA;
+    static double[] tempM;
+    static double[] tempB;
+    static double tempSolF;
+    static double tempSolM;
 
     public static void main(String[] args) {
         //new LinProger().linProg();
@@ -349,21 +373,231 @@ public class Main {
     }
 
     public static void defaultInitialize() {
-        int numVar = 3;
-        int numCons = 3;
+//        numVar = 3;
+//        numCons = 3;
+//        //numSol = 1;
+//
+//
+//        f = new double[] {4, 1, 0};
+//        a = new double[numCons][];
+//
+//        a[0] = new double[] {3, 1, 0};
+//        a[1] = new double[] {4, 3, -1};
+//        a[2] = new double[] {1, 2, 0};
+//
+//        m = new double[] {-7, -4, 1};
+//        b = new double[] {3, 6, 4};
+//
+//        solF = 10;
+//        solM = 9;
+
+        solF = 10;
+        numCons = 4;
         //numSol = 1;
+        numVar = 2;
+        f = new double[] {4, 1};
+        a = new double[numCons][];
+        a[0] = new double[] {3, 1};
+        a[1] = new double[] {-3, -1};
+        a[2] = new double[] {-4, -3};
+        a[3] = new double[] {1, 2};
+        b = new double[] {3, -3, -6, 4};
+
+
+
+        // rearrange here
+        double[][] oldA;
+        double[] oldB;
+
+        oldA = Arrays.copyOf(a, a.length);
+        a = new double[numCons][numVar];
+        oldB = Arrays.copyOf(b, b.length);
+        b = new double[numCons];
+
+        int indexRe = 0;
+        for (int i = 0; i < b.length; i++) {
+            if (oldB[i] < 0) {
+                for (int j = 0; j < a[i].length; j++) {
+                    a[indexRe][j] = oldA[i][j];
+                    b[indexRe] = oldB[i];
+                }
+                indexRe++;
+            }
+        }
+
+        for (int i = 0; i < b.length; i++) {
+            if (oldB[i] >= 0) {
+                for (int j = 0; j < a[i].length; j++) {
+                    a[indexRe][j] = oldA[i][j];
+                    b[indexRe] = oldB[i];
+                }
+                indexRe++;
+            }
+        }
+
+
+        solM = 0;
+        int numNegB = 0;
+        for (int i = 0; i < b.length; i++) {
+            if (b[i] < 0) {
+                numNegB++;
+                solM -= b[i];
+            }
+        }
+        //solM = 9;
+        System.out.println("SolM: " + solM);
+
+        //numVar = 4; // numVar += numNegB
+        numVar += numNegB;
+        numCons = 4;
+        //numSol = 1;
+        solF = 10;
+
+        m = new double[numVar];
+        for (int i = 0; i < b.length; i++) {
+            if (b[i] < 0) {
+                for (int j = 0; j < m.length; j++) {
+                    if (j < numVar-numNegB) {
+                        m[j] += a[i][j];
+                    }else {
+                        m[j] = 1;
+                    }
+                }
+            }
+        }
+        //m = new double[] {-7, -4, 1, 1};
+        System.out.print("M: ");
+        for (double num : m) {
+            System.out.print(num + " ");
+        }
+        System.out.println("SolM: " + solM);
+
+
+
+
+        double[] oldF = Arrays.copyOf(f, f.length);
+        //f = new double[] {4, 1, 0, 0};
+
+        f = new double[numVar];
+
+        for (int i = 0; i < f.length; i++) {
+            if (i < numVar-numNegB) {
+                f[i] = oldF[i];
+            }
+        }
+
+//        System.out.print("f: ");
+//        for (double num : f) {
+//            System.out.print(num + " ");
+//        }
+
+
+
+        oldA = Arrays.copyOf(a, a.length);
+        a = new double[numCons][numVar];
+
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                if (j < numVar-numNegB) {
+                    if (b[i] < 0) {
+                        a[i][j] = -oldA[i][j];
+                    }else {
+                        a[i][j] = oldA[i][j];
+                    }
+                }else {
+                    if (b[i] < 0) {
+                        if (j - i == (numVar-numNegB)) {
+                            a[i][j] = -1;
+                        }else {
+                            a[i][j] = 0;
+                        }
+                    }else {
+                        a[i][j] = 0;
+                    }
+                }
+                //System.out.print(a[i][j] + " ");
+            }
+            //System.out.println();
+        }
+
+
+        for (int i = 0; i < b.length; i++) {
+                if (b[i] < 0) {
+                    b[i] = -b[i];
+                }
+            //System.out.print(a[i][j] + " ");
+        }
+
+//        System.out.print("b: ");
+//        for (double num : b) {
+//            System.out.print(num + " ");
+//        }
+
+
+        /*
+        a[0] = new double[] {3, 1, 0, 0};
+        a[1] = new double[] {-(-3), -(-1), -1, 0};// b < 0
+        a[2] = new double[] {-(-4), -(-3), 0, -1};// b < 0
+        a[3] = new double[] {1, 2, 0, 0};
+        b = new double[] {3, -(-3), -(-6), 4};
+        */
+
+
+
+        // describe a problem here.
+        //initialize(numVar, numCons, f, solF, m, solM, a, b);
+
+        showProblem();
+
         Nina.setDimension(numVar, numCons);
+        Nina.initialize(f, solF, m, solM, a, b);
+    }
 
-        double[] f = new double[] {4, 1, 0};
-        double[][] a = new double[numCons][];
+    public static void showProblem() {
+        String lineF = "z = ";
+        for (int i = 0; i < f.length; i++) {
+            if (f[i] < 0) {
+                lineF += "- " + (-f[i]) + "x" + (i+1) + " ";
+            }else {
+                lineF += "+ " + f[i] + "x" + (i+1) + " ";
+            }
+        }
+        if (solF < 0) {
+            lineF += solF;
+        }else {
+            lineF += "+ " + solF;
+        }
 
-        a[0] = new double[] {3, 1, 0};
-        a[1] = new double[] {4, 3, -1};
-        a[2] = new double[] {1, 2, 0};
+        System.out.println(lineF);
 
-        double[] m = new double[] {-7, -4, 1};
-        double[] b = new double[] {3, 6, 4};
+        System.out.println("s.t.");
 
-        Nina.initialize(f, 10, m, 9, a, b);
+        String lineA = "";
+
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                if (a[i][j] < 0) {
+                    lineA += "- " + (-a[i][j]) + "x" + (j+1) + " ";
+                }else {
+                    lineA += "+ " + a[i][j] + "x" + (j+1) + " ";
+                }
+            }
+
+            lineA += "<= " + b[i];
+
+            System.out.println(lineA);
+            lineA = "";
+        }
+        System.out.println();
+    }
+
+    public static void initialize(double numVar, double numCons, double[] f, double solF, double[] m, double solM, double[][] a, double[] b) {
+        showProblem();
+
+        for (int i = 0; i < b.length; i++) {
+            if (b[i] < 0) {
+
+            }
+        }
     }
 }
