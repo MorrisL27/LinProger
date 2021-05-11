@@ -62,6 +62,7 @@ public class UserInterface {
                         System.out.printf("%-15s%s", "PROB", "Display the current problem.\n");
                         System.out.printf("%-15s%s", "DEF", "Define the dimension of the problem.\n");
                         System.out.printf("%-15s%s", "VAR", "Modify the value of that variable.\n");
+                        System.out.printf("%-15s%s", "INIT", "Initialize the LinProger with parameters of problem.\n");
                         System.out.printf("%-15s%s", "STAT", "Display the status of variables and matrices.\n");
                         System.out.printf("%-15s%s", "RUN", "Calculate and display the tableau step by step.\n");
                         System.out.printf("%-15s%s", "EXIT", "Exit the LinProger.\n");
@@ -101,12 +102,16 @@ public class UserInterface {
                                 System.out.println();
                                 break;
 
+                            case "init":
+                                System.out.println("Initialize the LinProger with parameters of problem.\n");
+                                System.out.println("INIT\n");
+
+                                System.out.println();
+                                break;
+
                             case "prob":
                                 System.out.println("Display the current problem.\n");
-                                //System.out.println("STAT\n" + "STAT [variable]\n");
-                                //System.out.println("variable\t\n");
                                 System.out.println("PROB\n");
-                                //System.out.printf("%-15s%s", "variable", "the variable you want to show the status.\n");
 
                                 System.out.println();
                                 break;
@@ -332,6 +337,16 @@ public class UserInterface {
                     }
                     break;
 
+                case "init":
+                    if (s.length == 1) {
+                        transform();
+
+                        System.out.println();
+                    } else {
+                        System.out.println("Illegal number of arguments.\n");
+                    }
+                    break;
+
                 case "run":
                     if (s.length == 2) {
                         String mode = s[1].toLowerCase();
@@ -453,6 +468,10 @@ public class UserInterface {
         a[3] = new double[] {1, 2};
         b = new double[] {3, -3, -6, 4};
 
+        transform();
+    }
+
+    public static void transform() {
         // describe a problem here.
         tempSolF = solF;
         tempNumCons = numCons;
@@ -463,13 +482,6 @@ public class UserInterface {
         tempB = Arrays.copyOf(b, b.length);
 
         initialize(tempF, tempA, tempB);
-        //showProblem();
-//
-//        System.out.print("tempF: ");
-//        for (double num : tempF) {
-//            System.out.print(num + " ");
-//        }
-
 
         Nina.setDimension(tempNumVar, tempNumCons);
         Nina.initialize(tempF, tempSolF, tempM, tempSolM, tempA, tempB);
@@ -560,7 +572,7 @@ public class UserInterface {
             }
         }
         //solM = 9;
-        System.out.println("TempSolM: " + tempSolM);
+        //System.out.println("TempSolM: " + tempSolM);
 
         //numVar = 4; // numVar += numNegB
         tempNumVar = numVar;
