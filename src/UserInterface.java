@@ -32,6 +32,8 @@ public class UserInterface {
     static double tempSolF;
     static double tempSolM;
 
+    static boolean initialized = false;
+
     public static void main(String[] args) {
         //new LinProger().linProg();
         userInterface();
@@ -62,6 +64,7 @@ public class UserInterface {
                         System.out.printf("%-15s%s", "PROB", "Display the current problem.\n");
                         System.out.printf("%-15s%s", "DEF", "Define the dimension of the problem.\n");
                         System.out.printf("%-15s%s", "VAR", "Modify the value of that variable.\n");
+                        System.out.printf("%-15s%s", "MODE", "Change the mode of problem.\n");
                         System.out.printf("%-15s%s", "INIT", "Initialize the LinProger with parameters of problem.\n");
                         System.out.printf("%-15s%s", "STAT", "Display the status of variables and matrices.\n");
                         System.out.printf("%-15s%s", "RUN", "Calculate and display the tableau step by step.\n");
@@ -76,6 +79,15 @@ public class UserInterface {
                                 System.out.println("DEF [numVar] [numCons]");
                                 System.out.printf("%-15s%s", "numVar", "the number of variables.\n");
                                 System.out.printf("%-15s%s", "numCons", "the number of constraints.\n");
+                                // add more documentation here
+
+                                System.out.println();
+                                break;
+
+                            case "mode":
+                                System.out.println("Change the mode of problem.\n");
+                                System.out.println("MODE [mode]");
+                                System.out.printf("%-15s%s", "mode", "max or min.\n");
                                 // add more documentation here
 
                                 System.out.println();
@@ -118,8 +130,7 @@ public class UserInterface {
 
                             case "run":
                                 System.out.println("Calculate and display the tableau step by step.\n");
-                                System.out.println("RUN MIN");
-                                System.out.println("RUN MAX\n");
+                                System.out.println("RUN\n");
                                 break;
 
                             case "exit":
@@ -163,6 +174,7 @@ public class UserInterface {
                                             System.out.println(row + " should contain " + numVar + " entries.\n");
                                             break;
                                         }
+                                        initialized = false;
                                         System.out.println("Update " + row + " successfully.\n");
                                     }
 
@@ -188,7 +200,7 @@ public class UserInterface {
                                         break;
                                     }
 
-
+                                    initialized = false;
                                     System.out.println("Update " + row + " successfully.\n");
                                     break;
 
@@ -232,6 +244,8 @@ public class UserInterface {
                                         System.out.println(row + " should contain " + numCons + " entries.\n");
                                         break;
                                     }
+
+                                    initialized = false;
                                     System.out.println("Update " + row + " successfully.\n");
                                     break;
 
@@ -280,6 +294,8 @@ public class UserInterface {
                                     System.out.println(row + " should contain " + numVar + " entries.\n");
                                     break;
                                 }
+
+                                initialized = false;
                                 System.out.println("Update " + row + " successfully.\n");
                             }else {
                                 System.out.println("Variable not exists.");
@@ -294,15 +310,19 @@ public class UserInterface {
 
                 case "stat":
                     if (s.length == 1) {
-                        System.out.println("Current status: ");
-                        if (Nina.getMode()) {
-                            System.out.println("mode: Max");
-                        }else {
-                            System.out.println("mode: Min");
-                        }
+                        if (initialized) {
+                            System.out.println("Current status: ");
+                            if (Nina.getMode()) {
+                                System.out.println("mode: Max");
+                            } else {
+                                System.out.println("mode: Min");
+                            }
 
-                        Nina.showTableau();
-                        System.out.println();
+                            Nina.showTableau();
+                            System.out.println();
+                        }else {
+                            System.out.println("Nina not initialized by new problem!\n");
+                        }
                     } else {
                         System.out.println("Illegal number of arguments.\n");
                     }
@@ -329,6 +349,8 @@ public class UserInterface {
                     if (s.length == 1) {
                         transform();
 
+                        initialized = true;
+                        System.out.println("Nina initialized.");
                         System.out.println();
                     } else {
                         System.out.println("Illegal number of arguments.\n");
@@ -336,21 +358,50 @@ public class UserInterface {
                     break;
 
                 case "run":
+                    if (s.length == 1) {
+                        if (initialized) {
+                            if (modeMax) {
+                                Nina.modeMax();
+                            } else {
+                                Nina.modeMin();
+                            }
+                            Nina.run();
+                        }else {
+                            System.out.println("Nina not initialized by new problem!\n");
+                        }
+                    } else {
+                        System.out.println("Illegal number of arguments.\n");
+                    }
+                    break;
+
+                case "mode":
                     if (s.length == 2) {
                         String mode = s[1].toLowerCase();
                         switch(mode) {
                             case "max":
-                                modeMax = true;
-                                Nina.modeMax();
-                                Nina.run();
+                                if (!modeMax) {
+                                    modeMax = true;
+
+                                    initialized = false;
+                                    System.out.println("Problem changed to max mode.\n");
+                                }else {
+                                    System.out.println("Problem already in max mode!\n");
+                                }
                                 break;
+
                             case "min":
-                                modeMax = false;
-                                Nina.modeMin();
-                                Nina.run();
+                                if (modeMax) {
+                                    modeMax = false;
+
+                                    initialized = false;
+                                    System.out.println("Problem changed to min mode.\n");
+                                }else {
+                                    System.out.println("Problem already in min mode!\n");
+                                }
                                 break;
+
                             default:
-                                System.out.println("Invalid mode.");
+                                System.out.println("Invalid mode.\n");
                                 break;
                         }
                     } else {
@@ -376,6 +427,7 @@ public class UserInterface {
 
                         setDimension(numVar, numCons);
 
+                        initialized = false;
                         System.out.println("Status updated.\n");
                     }else {
                         System.out.println("Illegal number of arguments.\n");
@@ -392,7 +444,7 @@ public class UserInterface {
             }
         }
 
-        System.out.println("LinProger End.");
+        System.out.println("LinProger End.\n");
         in.close();
     }
 
@@ -443,6 +495,8 @@ public class UserInterface {
 //        solF = 10;
 //        solM = 9;
 
+        initialized = false;
+
         modeMax = false;
         solF = 10;
         numCons = 4;
@@ -457,6 +511,8 @@ public class UserInterface {
         b = new double[] {3, -3, -6, 4};
 
         transform();
+
+        initialized = true;
     }
 
     public static void transform() {
@@ -626,11 +682,6 @@ public class UserInterface {
         tempA = Arrays.copyOf(a, a.length);
         tempB = Arrays.copyOf(b, b.length);
         tempF = Arrays.copyOf(f, f.length);
-
-//        System.out.print("innerF: ");
-//        for (double num : f) {
-//            System.out.print(num + " ");
-//        }
     }
 
     public static void setA(int index, double[] rowA) {
@@ -640,11 +691,6 @@ public class UserInterface {
     public static void setF(double[] rowF) {
         f = Arrays.copyOf(rowF, rowF.length);
     }
-
-    /*
-    public static void setFM(double[] rowM) {
-        m = Arrays.copyOf(rowM, rowM.length);
-    }*/
 
     public static void setB(double[] rowB) {
         b = Arrays.copyOf(rowB, rowB.length);
@@ -658,5 +704,4 @@ public class UserInterface {
         solF = 0;
         solM = 0;
     }
-
 }
