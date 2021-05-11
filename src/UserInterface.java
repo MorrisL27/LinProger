@@ -262,7 +262,7 @@ public class UserInterface {
                                     break;
 
                                 default:
-                                    System.out.println("Variable not exists.");
+                                    System.out.println("Variable not exists.\n");
                             }
 
                             //Nina.showTableau();
@@ -298,7 +298,7 @@ public class UserInterface {
                                 initialized = false;
                                 System.out.println("Update " + row + " successfully.\n");
                             }else {
-                                System.out.println("Variable not exists.");
+                                System.out.println("Variable not exists.\n");
                             }
                         } else {
                             System.out.println("Illegal number of arguments.\n");
@@ -350,8 +350,7 @@ public class UserInterface {
                         transform();
 
                         initialized = true;
-                        System.out.println("Nina initialized.");
-                        System.out.println();
+                        System.out.println("Nina initialized.\n");
                     } else {
                         System.out.println("Illegal number of arguments.\n");
                     }
