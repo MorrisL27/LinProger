@@ -53,8 +53,8 @@ public class UserInterface {
             command = in.nextLine();
             String[] s = handler(command);
             option = s[0].toLowerCase();
-            int numVar;
-            int numCons;
+            //int numVar;
+            //int numCons;
 
             switch (option) {
                 case "help":
@@ -143,7 +143,7 @@ public class UserInterface {
                                 case "a":
 
                                     // update the whole matrix A
-                                    numCons = Nina.getNumCons();
+                                    //numCons = Nina.getNumCons();
 
                                     for (int i = 0; i < numCons; i++) {
                                         entries = fetchRow("" + (i + 1));
@@ -153,10 +153,11 @@ public class UserInterface {
                                             break;
                                         }
 
-                                        numVar = Nina.getNumVar();
+                                        //numVar = Nina.getNumVar();
 
                                         if (entries.length == numVar) {
-                                            Nina.setA(i, entries);
+                                            setA(i, entries);
+                                            //Nina.setA(i, entries);
                                         } else {
                                             System.out.println("Illegal number of arguments.\n");
                                             System.out.println(row + " should contain " + numVar + " entries.\n");
@@ -169,7 +170,6 @@ public class UserInterface {
 
 
                                 case "f":
-
                                     entries = fetchRow(row);
 
                                     if (entries == null) {
@@ -177,25 +177,11 @@ public class UserInterface {
                                         break;
                                     }
 
-                                    // buffer f in Main
-/*
-                                    if (entries.length == (numVar + 1)) {
-                                        Nina.setF(Arrays.copyOf(entries, entries.length - 1));
-                                        Nina.setSolF(entries[entries.length - 1]);
-                                    } else {
-                                        System.out.println("Illegal number of arguments.\n");
-                                        System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
-                                        break;
-                                    }
-
- */
-
-
-                                    numVar = Nina.getNumVar();
+                                    //numVar = Nina.getNumVar();
 
                                     if (entries.length == (numVar + 1)) {
-                                        Nina.setF(Arrays.copyOf(entries, entries.length - 1));
-                                        Nina.setSolF(entries[entries.length - 1]);
+                                        setF(Arrays.copyOf(entries, entries.length - 1));
+                                        solF = entries[entries.length - 1];
                                     } else {
                                         System.out.println("Illegal number of arguments.\n");
                                         System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
@@ -206,6 +192,7 @@ public class UserInterface {
                                     System.out.println("Update " + row + " successfully.\n");
                                     break;
 
+                                    /*
                                 case "fm":
                                     entries = fetchRow(row);
 
@@ -214,11 +201,12 @@ public class UserInterface {
                                         break;
                                     }
 
-                                    numVar = Nina.getNumVar();
+                                    //numVar = Nina.getNumVar();
 
                                     if (entries.length == (numVar + 1)) {
-                                        Nina.setFM(Arrays.copyOf(entries, entries.length - 1));
-                                        Nina.setSolM(entries[entries.length - 1]);
+                                        setFM(Arrays.copyOf(entries, entries.length - 1));
+                                        //Nina.setSolM(entries[entries.length - 1]);
+                                        solM(entries[entries.length - 1];
                                     } else {
                                         System.out.println("Illegal number of arguments.\n");
                                         System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
@@ -226,7 +214,7 @@ public class UserInterface {
                                     }
                                     System.out.println("Update " + row + " successfully.\n");
                                     break;
-
+*/
                                 case "b":
                                     entries = fetchRow(row);
 
@@ -235,10 +223,10 @@ public class UserInterface {
                                         break;
                                     }
 
-                                    numCons = Nina.getNumCons();
+                                    //numCons = Nina.getNumCons();
 
                                     if (entries.length == numCons) {
-                                        Nina.setB(entries);
+                                        setB(entries);
                                     } else {
                                         System.out.println("Illegal number of arguments.\n");
                                         System.out.println(row + " should contain " + numCons + " entries.\n");
@@ -283,10 +271,10 @@ public class UserInterface {
                                     break;
                                 }
 
-                                numVar = Nina.getNumVar();
+                                //numVar = Nina.getNumVar();
 
                                 if (entries.length == numVar) {
-                                    Nina.setA(index, entries);
+                                    setA(index, entries);
                                 } else {
                                     System.out.println("Illegal number of arguments.\n");
                                     System.out.println(row + " should contain " + numVar + " entries.\n");
@@ -386,7 +374,7 @@ public class UserInterface {
                             break;
                         }
 
-                        Nina.setDimension(numVar, numCons);
+                        setDimension(numVar, numCons);
 
                         System.out.println("Status updated.\n");
                     }else {
@@ -644,4 +632,31 @@ public class UserInterface {
 //            System.out.print(num + " ");
 //        }
     }
+
+    public static void setA(int index, double[] rowA) {
+        a[index] = rowA;
+    }
+
+    public static void setF(double[] rowF) {
+        f = Arrays.copyOf(rowF, rowF.length);
+    }
+
+    /*
+    public static void setFM(double[] rowM) {
+        m = Arrays.copyOf(rowM, rowM.length);
+    }*/
+
+    public static void setB(double[] rowB) {
+        b = Arrays.copyOf(rowB, rowB.length);
+    }
+
+    public static void setDimension(int numVar, int numCons) {
+        f = new double[numVar];
+        a = new double[numCons][numVar];
+        b = new double[numCons];
+        m = new double[numVar];
+        solF = 0;
+        solM = 0;
+    }
+
 }
