@@ -448,6 +448,7 @@ public class LinProger {
         //System.out.println("Optimal value " + optimum + " has found.\n");
         System.out.println("Optimal value has found.\n");
 
+        checkMode();
     }
 
     public void run() {
