@@ -249,7 +249,7 @@ public class LinProger {
     }
 
     public void showTableau() {
-        showTableau(displayZ, displayM, rowS);
+        //showTableau(displayZ, displayM, rowS);
         showTableau(rowZRationalDisplay, rowMRationalDisplay, rowSRational);
         //showTableau(rowZRational, rowMRational, rowSRational);
         //showTableau(rowZ, rowM, rowS);
@@ -542,7 +542,7 @@ public class LinProger {
             }
 
             //showTableau(displayZ, displayM, rowS);
-            showTableau(displayZ, displayM, rowS);
+            //showTableau(displayZ, displayM, rowS);
             showTableau(rowZRationalDisplay, rowMRationalDisplay, rowSRational);
 
             //showTableau(rowZ, rowM, rowS);
@@ -682,9 +682,9 @@ public class LinProger {
         if (!modeMax) {
             modeMax = true;
             checkMode();
-            System.out.println("Nina run in max mode.");
+            //System.out.println("Nina run in max mode.");
         }else {
-            System.out.println("Nina already in max mode.");
+            //System.out.println("Nina already in max mode.");
         }
     }
 
@@ -692,9 +692,9 @@ public class LinProger {
         if (modeMax) {
             modeMax = false;
             checkMode();
-            System.out.println("Nina run in min mode.");
+            //System.out.println("Nina run in min mode.");
         }else {
-            System.out.println("Nina already in min mode.");
+            //System.out.println("Nina already in min mode.");
         }
     }
 

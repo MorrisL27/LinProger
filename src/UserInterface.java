@@ -506,18 +506,30 @@ public class UserInterface {
 
         initialized = false;
 
-        modeMax = false;
+//        modeMax = false;
+//        solF = 10;
+//        numCons = 4;
+//        //numSol = 1;
+//        numVar = 2;
+//        f = new double[] {4, 1};
+//        a = new double[numCons][];
+//        a[0] = new double[] {3, 1};
+//        a[1] = new double[] {-3, -1};
+//        a[2] = new double[] {-4, -3};
+//        a[3] = new double[] {1, 2};
+//        b = new double[] {3, -3, -6, 4};
+
+        modeMax = true;
         solF = 10;
-        numCons = 4;
+        numCons = 3;
         //numSol = 1;
-        numVar = 2;
-        f = new double[] {4, 1};
+        numVar = 3;
+        f = new double[] {2, -3, 6};
         a = new double[numCons][];
-        a[0] = new double[] {3, 1};
-        a[1] = new double[] {-3, -1};
-        a[2] = new double[] {-4, -3};
-        a[3] = new double[] {1, 2};
-        b = new double[] {3, -3, -6, 4};
+        a[0] = new double[] {-3, 4, 6};
+        a[1] = new double[] {-2, -1, -2};
+        a[2] = new double[] {1, 3, -2};
+        b = new double[] {-2, -11, 5};
 
         transform();
         //showBigM();
@@ -539,7 +551,12 @@ public class UserInterface {
 
         Nina.setDimension(tempNumVar, tempNumCons);
         Nina.setNumNegB(tempNumNegB);
+
         Nina.initialize(tempF, tempSolF, tempM, tempSolM, tempA, tempB);
+
+        if (modeMax) {
+            Nina.modeMax();
+        }
     }
 
     public static void showProblem() {
@@ -663,32 +680,33 @@ public class UserInterface {
         for (int i = 0; i < b.length; i++) {
             if (b[i] < 0) {
                 numNegB++;
-                tempSolM -= b[i];
+                if (modeMax) {
+                    tempSolM += b[i];
+                }else {
+                    tempSolM -= b[i];
+                }
             }
         }
 
-//        if (numNegB != 0) {
-//            System.out.println("Big-M Technique being applied.");
-//        }
-
-        //solM = 9;
-        //System.out.println("TempSolM: " + tempSolM);
-
-        //numVar = 4; // numVar += numNegB
         tempNumVar = numVar;
         tempNumVar += numNegB;
-        //numCons = 4;
-        //numSol = 1;
-        //solF = 10;
 
         tempM = new double[tempNumVar];
         for (int i = 0; i < b.length; i++) {
             if (b[i] < 0) {
                 for (int j = 0; j < tempM.length; j++) {
                     if (j < tempNumVar-numNegB) {
-                        tempM[j] += a[i][j];
+                        if (modeMax) {
+                            tempM[j] -= a[i][j];
+                        }else {
+                            tempM[j] += a[i][j];
+                        }
                     }else {
-                        tempM[j] = 1;
+                        if (modeMax) {
+                            tempM[j] = -1;
+                        }else {
+                            tempM[j] = 1;
+                        }
                     }
                 }
             }
