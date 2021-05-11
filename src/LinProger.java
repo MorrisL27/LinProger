@@ -8,6 +8,10 @@ public class LinProger {
     private double[] displayM;
     private double[][] rowS;
 
+    private String[] rowZRational;
+    private String[] rowMRational;
+    private String[][] rowSRational;
+
     private double[] tempF;
     private double[] tempM;
     private double[] f;
@@ -144,6 +148,11 @@ public class LinProger {
         rowZ = new double[numVar + numCons + numSol];
         rowM = new double[numVar + numCons + numSol];
         rowS = new double[numCons][numVar + numCons + numSol];
+
+        rowZRational = new String[numVar + numCons + numSol];
+        rowMRational = new String[numVar + numCons + numSol];
+        rowSRational = new String[numCons][numVar + numCons + numSol];
+
         bases = new int[numCons];
 
         // set rowZ by tempF
@@ -200,6 +209,25 @@ public class LinProger {
             }
         }
 
+
+        for (int i = 0; i < rowZ.length; i++) {
+            rowZRational[i] = "" + (int) rowZ[i];
+            //System.out.println("NMSL" + rowZRational[i]);
+        }
+
+        for (int i = 0; i < rowM.length; i++) {
+            rowMRational[i] = "" + (int) rowM[i];
+            //System.out.println("NMSL" + rowMRational[i]);
+
+        }
+
+        for (int i = 0; i < rowS.length; i++) {
+            for (int j = 0; j < rowS[i].length; j++) {
+                rowSRational[i][j] = "" + (int) rowS[i][j];
+                //System.out.println("NMSL" + rowSRational[i][j]);
+            }
+        }
+
         resetBases();
     }
 
@@ -208,39 +236,6 @@ public class LinProger {
             bases[i] = i + numVar;
         }
     }
-
-    /*
-    rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
-    rowM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    rowS = new double[4][9];
-    rowS[0] = new double[] {-1, -1, 0, 0, 1, 0, 0, 0, 1};
-    rowS[1] = new double[] {0, 1, -1, 1, 0, 1, 0, 0, 2};
-    rowS[2] = new double[] {5, 0, 2, -2, 0, 0, 1, 0, 0};
-    rowS[3] = new double[] {-1, 0, 1, 1, 0, 0, 0, 1, 0};
-     */
-
-    /*
-    private void setDefaultValue() {
-        f = new double[] {-2, -2, 0, 0};
-        a[0] = new double[] {-1, -1, 0, 0};
-        a[1] = new double[] {0, 1, -1, 1};
-        a[2] = new double[] {5, 0, 2, -2};
-        a[3] = new double[] {-1, 0, 1, 1};
-        m = new double[] {0, 0, 0, 0};
-        b = new double[] {1, 2, 0, 0};
-
-        //double[] m; // big M
-
-
-        //rowZ = new double[] {2, 2, 0, 0, 0, 0, 0, 0, 0};
-        //rowM = new double[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        //rowS = new double[4][9];
-        //rowS[0] = new double[] {-1, -1, 0, 0, 1, 0, 0, 0, 1};
-        //owS[1] = new double[] {0, 1, -1, 1, 0, 1, 0, 0, 2};
-        //rowS[2] = new double[] {5, 0, 2, -2, 0, 0, 1, 0, 0};
-        //rowS[3] = new double[] {-1, 0, 1, 1, 0, 0, 0, 1, 0};
-    }
-*/
 
     // n: number of variables
     // m: number of constraints
@@ -306,8 +301,45 @@ public class LinProger {
         //System.out.println();
     }
 
+    private void showTableau(String[] rowZ, String[] rowM, String[][] rowS) {
+        System.out.print("Basic ");
+
+        for (int i = 0; i < numVar; i++) {
+            System.out.printf(" %-5s", findVariable(i));
+        }
+
+        for (int i = 0; i < numCons; i++) {
+            System.out.printf(" %-5s", findVariable(i + numVar));
+        }
+
+        System.out.println(" Solution");
+
+        // check z
+        System.out.print("z     ");
+        for (int i = 0; i < rowZ.length; i++) {
+            System.out.printf(" %-5s", rowZ[i]);
+        }
+        System.out.println();
+
+        System.out.print("M     ");
+        for (int i = 0; i < rowM.length; i++) {
+            System.out.printf(" %-5s", rowM[i]);
+        }
+        System.out.println();
+
+        // check A
+        for (int j = 0; j < rowS.length; j++) {
+            System.out.print(findVariable(bases[j]) + "    ");
+            for (int i = 0; i < rowS[0].length; i++) {
+                System.out.printf(" %-5s", rowS[j][i]);
+            }
+            System.out.println();
+        }
+    }
+
     private void linProg(double[] rowZ, double[] rowM, double[][] rowS) {
         showTableau();
+        showTableau(rowZRational, rowMRational, rowSRational);
 
         // for min
         //boolean finish = false;
@@ -372,22 +404,41 @@ public class LinProger {
             }
 
             double factor = rowS[leaving][entering];
+            String cofactor = rowSRational[leaving][entering];
 
             for (int i = 0; i < rowS[leaving].length; i++) {
-                rowS[leaving][i] = rowS[leaving][i] / factor;
+                rowSRational[leaving][i] = pivotOperation(rowSRational[leaving][i], cofactor);
+                //System.out.println(rowSRational[leaving][i]);
+
+                double result = rowS[leaving][i] / factor;
+                rowS[leaving][i] = result;
             }
 
             factor = rowM[entering];
+            cofactor = rowMRational[entering];
+
             for (int i = 0; i < rowM.length; i++) {
-                rowM[i] = rowM[i] - factor * rowS[leaving][i];
-                if (Math.abs(rowM[i]) < 0.0001) {
-                    rowM[i] = 0;
+                rowMRational[i] = reduceOperation(rowMRational[i], cofactor, rowSRational[leaving][i]);
+
+                double result = rowM[i] - factor * rowS[leaving][i];
+                if (Math.abs(result) < 0.0001) {
+                    result = 0;
                 }
+                rowM[i] = result;
             }
 
             factor = rowZ[entering];
+            cofactor = rowZRational[entering];
+
             for (int i = 0; i < rowZ.length; i++) {
-                rowZ[i] = rowZ[i] - factor * rowS[leaving][i];
+                rowZRational[i] = reduceOperation(rowZRational[i], cofactor, rowSRational[leaving][i]);
+
+                double result = rowZ[i] - factor * rowS[leaving][i];
+                if (Math.abs(result) < 0.0001) {
+                    result = 0;
+                }
+
+                rowZ[i] = result;
             }
 
             for (int i = 0; i < rowS.length; i++) {
@@ -396,15 +447,19 @@ public class LinProger {
                 }
 
                 factor = rowS[i][entering];
+                cofactor = rowSRational[i][entering];
                 for (int j = 0; j < rowS[i].length; j++) {
-                    rowS[i][j] = rowS[i][j] - factor * rowS[leaving][j];
+                    rowSRational[i][j] = reduceOperation(rowSRational[i][j], cofactor, rowSRational[leaving][j]);
+
+                    double result = rowS[i][j] - factor * rowS[leaving][j];
+
+                    if (Math.abs(result) < 0.0001) {
+                        result = 0;
+                    }
+
+                    rowS[i][j] = result;
                 }
             }
-
-            // real index
-            //String enterVariable = findVariable(entering) + "\u0332";
-            //String leavingVariable = findVariable(bases[leaving]) + "\u0332";
-
 
             String enterVariable = findVariable(entering);
             String leavingVariable = findVariable(bases[leaving]);
@@ -448,7 +503,9 @@ public class LinProger {
                 displayM = Arrays.copyOf(rowM, rowM.length);
             }
 
+            //showTableau(displayZ, displayM, rowS);
             showTableau(displayZ, displayM, rowS);
+            showTableau(rowZRational, rowMRational, rowSRational);
 
             //showTableau(rowZ, rowM, rowS);
             //System.out.println();
@@ -586,5 +643,90 @@ public class LinProger {
         int positionLeave = leaving - 1;
 
         bases[positionLeave] = idEnter;
+    }
+
+    //最大公约数(Greatest Common Divisor)
+    public int gcd(int p,int q){
+        if(q == 0)    return p;
+        return gcd(q, p % q);
+    }
+
+    public boolean isFraction(String number) {
+        String[] numbers = number.trim().split("/");
+
+        if (numbers.length == 2) {
+            return true;
+        }
+        return false;
+    }
+
+    public int[] splitFraction(String number) {
+        int[] parts = new int[2];
+
+        if (isFraction(number)) {
+            String[] numbers = number.trim().split("/");
+            parts[0] = Integer.parseInt(numbers[0]);
+            parts[1] = Integer.parseInt(numbers[1]);
+            return parts;
+
+        }else {
+//            System.out.println(Integer.parseInt("0.01"));
+//            System.out.println(number);
+
+            // can not parse decimal
+            parts[0] = Integer.parseInt(number);
+            parts[1] = 1;
+
+            return parts;
+        }
+    }
+
+    public String pivotOperation(String a, String b) {
+        //System.out.println("Pivot " + a + " / " + b);
+        int[] fractionsA = splitFraction(a);
+        int[] fractionsB = splitFraction(b);
+
+        int numerator = fractionsA[0] * fractionsB[1];
+        int denominator = fractionsA[1] * fractionsB[0];
+
+        int common = gcd(numerator, denominator);
+
+        if (denominator / common == 1) {
+            return "" + numerator / common;
+        }else {
+            return signMove((numerator / common), (denominator / common));
+        }
+    }
+
+    public String reduceOperation(String a, String b, String c) {
+        //System.out.println("Reduce " + a + " - " + b + " * " + c);
+        int[] fractionsA = splitFraction(a);
+        int[] fractionsB = splitFraction(b);
+        int[] fractionsC = splitFraction(c);
+
+//        System.out.println("a = " + fractionsA[0] + "/" + fractionsA[1]);
+//        System.out.println("b = " + fractionsB[0] + "/" + fractionsB[1]);
+//        System.out.println("c = " + fractionsC[0] + "/" + fractionsC[1]);
+
+        int numerator = fractionsA[0] * fractionsB[1] * fractionsC[1] - fractionsA[1] * fractionsB[0] * fractionsC[0];
+        int denominator = fractionsA[1] * fractionsB[1] * fractionsC[1];
+
+        int common = gcd(numerator, denominator);
+
+        if (denominator / common == 1) {
+            return "" + numerator / common;
+        }else {
+            return signMove((numerator / common), (denominator / common));
+        }
+    }
+
+    public String signMove(int numerator, int denominator) {
+        if (numerator < 0 && denominator < 0) {
+            return (-numerator) + "/" + (-denominator);
+        }else if (denominator < 0) {
+            return "-" + numerator + "/" + (-denominator);
+        }else {
+            return numerator + "/" + denominator;
+        }
     }
 }
