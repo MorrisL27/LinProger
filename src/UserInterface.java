@@ -10,10 +10,6 @@ public class UserInterface {
     // parameters for original problem
     static int numVar;
     static int numCons;
-//    static double[] f = new double[numVar];
-//    static double[][] a = new double[numCons][numVar];
-//    static double[] m = new double[numVar];
-//    static double[] b = new double[numCons];
     static double[] f;
     static double[][] a;
     static double[] m;
@@ -21,6 +17,17 @@ public class UserInterface {
     static double solF;
     static double solM;
     static boolean modeMax;
+
+    // parameters for dual problem
+    static int numVarDual;
+    static int numConsDual;
+    static double[] fDual;
+    static double[][] aDual;
+    static double[] mDual;
+    static double[] bDual;
+    static double solFDual;
+    static double solMDual;
+    static boolean modeMaxDual;
 
     // parameters for LinProger
     static int tempNumVar;
@@ -111,10 +118,9 @@ public class UserInterface {
 
                             case "stat":
                                 System.out.println("Display the status of variables and matrices.\n");
-                                //System.out.println("STAT\n" + "STAT [variable]\n");
-                                //System.out.println("variable\t\n");
                                 System.out.println("STAT\n");
-                                //System.out.printf("%-15s%s", "variable", "the variable you want to show the status.\n");
+                                // add more documentation here
+                                // TODO: add stat for each variable
 
                                 System.out.println();
                                 break;
@@ -122,6 +128,7 @@ public class UserInterface {
                             case "init":
                                 System.out.println("Initialize the LinProger with parameters of problem.\n");
                                 System.out.println("INIT\n");
+                                System.out.println("INIT DUAL\n");
 
                                 System.out.println();
                                 break;
@@ -129,6 +136,7 @@ public class UserInterface {
                             case "prob":
                                 System.out.println("Display the current problem.\n");
                                 System.out.println("PROB\n");
+                                System.out.println("PROB DUAL\n");
 
                                 System.out.println();
                                 break;
@@ -179,6 +187,8 @@ public class UserInterface {
                                             System.out.println(row + " should contain " + numVar + " entries.\n");
                                             break;
                                         }
+
+                                        setDual();
                                         initialized = false;
                                         System.out.println("Update " + row + " successfully.\n");
                                     }
@@ -205,33 +215,11 @@ public class UserInterface {
                                         break;
                                     }
 
+                                    setDual();
                                     initialized = false;
                                     System.out.println("Update " + row + " successfully.\n");
                                     break;
 
-                                    /*
-                                case "fm":
-                                    entries = fetchRow(row);
-
-                                    if (entries == null) {
-                                        System.out.println("Update failed.\n");
-                                        break;
-                                    }
-
-                                    //numVar = Nina.getNumVar();
-
-                                    if (entries.length == (numVar + 1)) {
-                                        setFM(Arrays.copyOf(entries, entries.length - 1));
-                                        //Nina.setSolM(entries[entries.length - 1]);
-                                        solM(entries[entries.length - 1];
-                                    } else {
-                                        System.out.println("Illegal number of arguments.\n");
-                                        System.out.println(row + " should contain " + numVar + " entries and 1 solution.\n");
-                                        break;
-                                    }
-                                    System.out.println("Update " + row + " successfully.\n");
-                                    break;
-*/
                                 case "b":
                                     entries = fetchRow(row);
 
@@ -250,6 +238,7 @@ public class UserInterface {
                                         break;
                                     }
 
+                                    setDual();
                                     initialized = false;
                                     System.out.println("Update " + row + " successfully.\n");
                                     break;
@@ -300,6 +289,7 @@ public class UserInterface {
                                     break;
                                 }
 
+                                setDual();
                                 initialized = false;
                                 System.out.println("Update " + row + " successfully.\n");
                             }else {
@@ -335,16 +325,17 @@ public class UserInterface {
 
                 case "prob":
                     if (s.length == 1) {
-                        /*
-                        System.out.println("Current status: ");
-                        if (Nina.getMode()) {
-                            System.out.println("mode: Max");
-                        }else {
-                            System.out.println("mode: Min");
-                        }*/
-
-                        showProblem();
+                        System.out.println("Original problem:");
+                        showProblem(false);
                         System.out.println();
+                    } else if (s.length == 2) {
+                        if (s[1].equals("dual")) {
+                            System.out.println("Dual problem:");
+
+                            setDual();
+                            showProblem(true);
+                            System.out.println();
+                        }
                     } else {
                         System.out.println("Illegal number of arguments.\n");
                     }
@@ -352,7 +343,9 @@ public class UserInterface {
 
                 case "init":
                     if (s.length == 1) {
-                        transform();
+                        transform(false);
+
+                        // TODO: add dual
 
                         if (modeMax) {
                             Nina.modeMax();
@@ -387,6 +380,7 @@ public class UserInterface {
                             case "max":
                                 if (!modeMax) {
                                     modeMax = true;
+                                    setDual();
 
                                     initialized = false;
                                     System.out.println("Problem changed to max mode.\n");
@@ -398,6 +392,7 @@ public class UserInterface {
                             case "min":
                                 if (modeMax) {
                                     modeMax = false;
+                                    setDual();
 
                                     initialized = false;
                                     System.out.println("Problem changed to min mode.\n");
@@ -417,21 +412,28 @@ public class UserInterface {
 
                 case "def":
                     if (s.length == 3) {
+                        int readVar = 0;
+                        int readCons = 0;
+
                         try {
-                            numVar = Integer.parseInt(s[1]);
+                            readVar = Integer.parseInt(s[1]);
                         } catch (Exception e){
                             System.out.println("Number of variables is not a number.\n");
                             break;
                         }
 
                         try {
-                            numCons = Integer.parseInt(s[2]);
+                            readCons = Integer.parseInt(s[2]);
                         } catch (Exception e){
                             System.out.println("Number of constraints is not a number.\n");
                             break;
                         }
 
+                        numVar = readVar;
+                        numCons = readCons;
+
                         setDimension(numVar, numCons);
+                        setDimensionDual();
 
                         initialized = false;
                         System.out.println("Status updated.\n");
@@ -486,38 +488,7 @@ public class UserInterface {
     }
 
     public static void defaultInitialize() {
-//        numVar = 3;
-//        numCons = 3;
-//        //numSol = 1;
-//
-//
-//        f = new double[] {4, 1, 0};
-//        a = new double[numCons][];
-//
-//        a[0] = new double[] {3, 1, 0};
-//        a[1] = new double[] {4, 3, -1};
-//        a[2] = new double[] {1, 2, 0};
-//
-//        m = new double[] {-7, -4, 1};
-//        b = new double[] {3, 6, 4};
-//
-//        solF = 10;
-//        solM = 9;
-
         initialized = false;
-
-//        modeMax = false;
-//        solF = 10;
-//        numCons = 4;
-//        //numSol = 1;
-//        numVar = 2;
-//        f = new double[] {4, 1};
-//        a = new double[numCons][];
-//        a[0] = new double[] {3, 1};
-//        a[1] = new double[] {-3, -1};
-//        a[2] = new double[] {-4, -3};
-//        a[3] = new double[] {1, 2};
-//        b = new double[] {3, -3, -6, 4};
 
         modeMax = false;
         solF = 0;
@@ -531,18 +502,29 @@ public class UserInterface {
         a[2] = new double[] {1, 3, -2};
         b = new double[] {-2, -11, 5};
 
-        transform();
-        //showBigM();
+        // for original problem
+        transform(numVar, numCons, f, a, b, solF, modeMax);
+
+        // for dual problem
+        //transform(numVarDual, numConsDual, fDual, aDual, bDual, solFDual, modeMaxDual);
 
         initialized = true;
     }
 
-    public static void transform() {
+    public static void transform(boolean dual) {
+        if (dual) {
+            transform(numVarDual, numConsDual, fDual, aDual, bDual, solFDual, modeMaxDual);
+        }else {
+            transform(numVar, numCons, f, a, b, solF, modeMax);
+        }
+    }
+
+    public static void transform(int numVar, int numCons, double[] f, double[][] a, double[] b, double solF, boolean modeMax) {
         // describe a problem here.
         tempSolF = solF;
         tempNumCons = numCons;
         //numSol = 1;
-        //tempNumVar = numVar;
+        tempNumVar = numVar;
         tempF = Arrays.copyOf(f, f.length);
         tempA = Arrays.copyOf(a, a.length);
         tempB = Arrays.copyOf(b, b.length);
@@ -559,7 +541,15 @@ public class UserInterface {
         }
     }
 
-    public static void showProblem() {
+    public static void showProblem(boolean dual) {
+        if (dual) {
+            showProblem(fDual, aDual, bDual, solFDual, modeMaxDual);
+        }else {
+            showProblem(f, a, b, solF, modeMax);
+        }
+    }
+
+    public static void showProblem(double[] f, double[][] a, double[] b, double solF, boolean modeMax) {
         if (modeMax) {
             System.out.print("max ");
         }else {
@@ -569,7 +559,7 @@ public class UserInterface {
         String lineF = "z = ";
         for (int i = 0; i < f.length; i++) {
             if (f[i] < 0) {
-                lineF += "- " + (-f[i]) + "x" + (i+1) + " ";
+                lineF += "- " + (-f[i]) + "x" + (i + 1) + " ";
             }else {
                 lineF += "+ " + f[i] + "x" + (i+1) + " ";
             }
@@ -600,9 +590,11 @@ public class UserInterface {
             System.out.println(lineA);
             lineA = "";
         }
-        //System.out.println();
     }
 
+
+
+    // conversion inside temp
     public static void initialize(double[] f, double[][] a, double[] b) {
         // rearrange here
         double[][] oldA;
@@ -786,5 +778,92 @@ public class UserInterface {
         }
         System.out.println(lineMiu);
         System.out.println(lineT);
+    }
+
+    public static void setDual() {
+        if (solF == 0) {
+            setDimensionDual();
+
+            if (modeMax) {
+                modeMaxDual = false;
+
+                // set fDual
+                for (int i = 0; i < fDual.length; i++) {
+                    fDual[i] = b[i];
+                }
+
+                // set bDual
+                for (int i = 0; i < bDual.length; i++) {
+                    if (f[i] != 0) {
+                        bDual[i] = -f[i];
+                    }else {
+                        bDual[i] = 0;
+                    }
+
+                }
+            }else {
+                modeMaxDual = true;
+
+                // set fDual
+                for (int i = 0; i < fDual.length; i++) {
+                    if (b[i] != 0) {
+                        fDual[i] = -b[i];
+                    }else {
+                        fDual[i] = 0;
+                    }
+                }
+
+                // set bDual
+                for (int i = 0; i < bDual.length; i++) {
+                    bDual[i] = f[i];
+                }
+            }
+
+            // set aDual
+            aDual = negativeMatrix(transposeMatrix(a));
+
+            //initialize();
+        }else {
+            System.out.println("Content non-zero solF!");
+        }
+
+    }
+
+    public static double[][] transposeMatrix(double[][] a) {
+        double[][] newA = new double[a[0].length][a.length];
+
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                newA[j][i] = a[i][j];
+            }
+        }
+        return newA;
+    }
+
+    public static double[][] negativeMatrix(double[][] a) {
+        double[][] newA = Arrays.copyOf(a, a.length);
+
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                if (a[i][j] != 0) {
+                    newA[i][j] = -a[i][j];
+                }else {
+                    newA[i][j] = 0;
+                }
+            }
+        }
+        return newA;
+    }
+
+    public static void setDimensionDual() {
+        numVarDual = numCons;
+        numConsDual = numVar;
+
+        fDual = new double[numVarDual];
+        aDual = new double[numConsDual][numVarDual];
+        bDual = new double[numConsDual];
+        mDual = new double[numVarDual];
+        solFDual = 0;
+        solMDual = 0;
     }
 }
