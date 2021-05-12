@@ -461,7 +461,7 @@ public class UserInterface {
                         numCons = readCons;
 
                         setDimension(numVar, numCons);
-                        setDimensionDual();
+                        setDimensionDual(numVar, numCons);
 
                         initialized = false;
                         System.out.println("Status updated.\n");
@@ -821,9 +821,9 @@ public class UserInterface {
         }
     }
 
-    public static void setDual() {
+    public static void setDual(int numVar, int numCons, double[] f, double[][] a, double[] b, double solF, boolean modeMax) {
         if (solF == 0) {
-            setDimensionDual();
+            setDimensionDual(numVar, numCons);
 
             if (modeMax) {
                 modeMaxDual = false;
@@ -865,9 +865,67 @@ public class UserInterface {
 
             //initialize();
         }else {
-            System.out.println("Content non-zero solF!");
-        }
+            //System.out.println("Content non-zero solF!");
 
+            int numVarExtend = numVar + 1;
+            int numConsExtend = numCons + 2;
+            double[] fExtend = new double[numVarExtend];
+            double[][] aExtend = new double[numConsExtend][numVarExtend];
+            double[] bExtend = new double[numConsExtend];
+            double solFExtend = 0;
+            boolean modeMaxExtend = modeMax;
+
+            // extend f
+            for (int i = 0; i < fExtend.length; i++) {
+                if (i < numVar) {
+                    fExtend[i] = f[i];
+                }else {
+                    fExtend[i] = solF;
+                }
+            }
+
+            // extend matrix a
+            for (int i = 0; i < aExtend.length; i++) {
+                for (int j = 0; j < aExtend[i].length; j++) {
+                    if (i < numCons) {
+                        if (j < numVar) {
+                            aExtend[i][j] = a[i][j];
+                        }else {
+                            aExtend[i][j] = 0;
+                        }
+                    }else if (i < numCons + 1){
+                        if (j < numVar) {
+                            aExtend[i][j] = 0;
+                        }else {
+                            aExtend[i][j] = 1;
+                        }
+                    }else {
+                        if (j < numVar) {
+                            aExtend[i][j] = 0;
+                        }else {
+                            aExtend[i][j] = -1;
+                        }
+                    }
+
+                }
+            }
+
+            for (int i = 0; i < bExtend.length; i++) {
+                if (i < numCons) {
+                    bExtend[i] = b[i];
+                }else if (i < numCons + 1){
+                    bExtend[i] = 1;
+                }else {
+                    bExtend[i] = -1;
+                }
+            }
+
+            setDual(numVarExtend, numConsExtend, fExtend, aExtend, bExtend, solFExtend, modeMaxExtend);
+        }
+    }
+
+    public static void setDual() {
+        setDual(numVar, numCons, f, a, b, solF, modeMax);
     }
 
     public static double[][] transposeMatrix(double[][] a) {
@@ -896,7 +954,7 @@ public class UserInterface {
         return newA;
     }
 
-    public static void setDimensionDual() {
+    public static void setDimensionDual(int numVar, int numCons) {
         numVarDual = numCons;
         numConsDual = numVar;
 
