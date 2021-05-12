@@ -595,17 +595,29 @@ public class UserInterface {
 
         for (int i = 0; i < f.length; i++) {
             display = (int) f[i];
-            if (display < 0) {
-                lineF += "- " + (-display) + variable + (i + 1) + " ";
+            if (display == 1) {
+                if (i == 0) {
+                    lineF += variable + (i+1) + " ";
+                }else {
+                    lineF += "+ " + variable + (i+1) + " ";
+                }
+            }else if (display == -1) {
+                lineF += "- " + variable + (i+1) + " ";
+            }else if (display < 0) {
+                lineF += "- " + (-display) + variable + (i+1) + " ";
             }else {
-                lineF += "+ " + display + variable + (i+1) + " ";
+                if (i == 0) {
+                    lineF += variable + (i+1) + " ";
+                }else {
+                    lineF += "+ " + display + variable + (i+1) + " ";
+                }
             }
         }
 
         display = (int) solF;
         if (display < 0) {
             lineF += "- " + (-display);
-        }else {
+        }else if (display > 0) {
             lineF += "+ " + display;
         }
 
@@ -618,7 +630,11 @@ public class UserInterface {
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[i].length; j++) {
                 display = (int) a[i][j];
-                if (display < 0) {
+                if (display == 1) {
+                    lineA += "+  " + variable + (j+1) + " ";
+                }else if (display == -1) {
+                    lineA += "-  " + variable + (j+1) + " ";
+                }else if (display < 0) {
                     lineA += "- " + (-display) + variable + (j+1) + " ";
                 }else {
                     lineA += "+ " + display + variable + (j+1) + " ";
