@@ -355,6 +355,10 @@ public class UserInterface {
                             Nina.modeMin();
                         }
 
+
+                        Nina.setDual(false);
+
+
                         initialized = true;
                         System.out.println("Nina initialized.\n");
                     } else if (s.length == 2) {
@@ -368,6 +372,8 @@ public class UserInterface {
                             } else {
                                 Nina.modeMin();
                             }
+
+                            Nina.setDual(true);
 
                             initialized = true;
                             System.out.println("Nina initialized dual problem.\n");
@@ -563,25 +569,31 @@ public class UserInterface {
 
     public static void showProblem(boolean dual) {
         if (dual) {
-            showProblem(fDual, aDual, bDual, solFDual, modeMaxDual);
+            showProblem(fDual, aDual, bDual, solFDual, modeMaxDual, dual);
         }else {
-            showProblem(f, a, b, solF, modeMax);
+            showProblem(f, a, b, solF, modeMax, dual);
         }
     }
 
-    public static void showProblem(double[] f, double[][] a, double[] b, double solF, boolean modeMax) {
+    public static void showProblem(double[] f, double[][] a, double[] b, double solF, boolean modeMax, boolean dual) {
         if (modeMax) {
             System.out.print("max ");
         }else {
             System.out.print("min ");
         }
 
-        String lineF = "z = ";
+        String objective = "z";
+        String variable = "x";
+        if (dual) {
+            objective = "w";
+            variable = "y";
+        }
+        String lineF = objective + " = ";
         for (int i = 0; i < f.length; i++) {
             if (f[i] < 0) {
-                lineF += "- " + (-f[i]) + "x" + (i + 1) + " ";
+                lineF += "- " + (-f[i]) + variable + (i + 1) + " ";
             }else {
-                lineF += "+ " + f[i] + "x" + (i+1) + " ";
+                lineF += "+ " + f[i] + variable + (i+1) + " ";
             }
         }
         if (solF < 0) {
@@ -599,9 +611,9 @@ public class UserInterface {
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[i].length; j++) {
                 if (a[i][j] < 0) {
-                    lineA += "- " + (-a[i][j]) + "x" + (j+1) + " ";
+                    lineA += "- " + (-a[i][j]) + variable + (j+1) + " ";
                 }else {
-                    lineA += "+ " + a[i][j] + "x" + (j+1) + " ";
+                    lineA += "+ " + a[i][j] + variable + (j+1) + " ";
                 }
             }
 

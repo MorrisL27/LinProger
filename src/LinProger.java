@@ -41,6 +41,8 @@ public class LinProger {
     // false: min mode
     // true: max mode
 
+    private boolean dual;
+
     private int numNegB;
 
     public static void main(String[] args) {
@@ -49,6 +51,7 @@ public class LinProger {
 
     public LinProger() {
         modeMax = false;// min mode initially
+        dual = false;
     }
 
     public int getNumVar() {
@@ -148,13 +151,8 @@ public class LinProger {
 
         bases = new int[numCons];
 
-        System.out.println("NumVar: " + numVar + "; NumCons: " + numCons);
-        System.out.println("Ideal length: " + (numVar + numCons + numSol));
-        System.out.println("RowZ length: " + rowZ.length);
-        System.out.println("tempF length: " + tempF.length);
         // set rowZ by tempF
         for (int i = 0; i < rowZ.length; i++) {
-            System.out.println("Iteration " + i);
             if (i < numVar) {
                 // actual value in rowZ is negative to tempF
                 if (f[i]!=0) {
@@ -320,8 +318,14 @@ public class LinProger {
 
         System.out.println(" Solution");
 
-        // check z
-        System.out.print("z     ");
+        if (dual) {
+            // check w
+            System.out.print("w     ");
+        }else {
+            // check z
+            System.out.print("z     ");
+        }
+
         for (int i = 0; i < rowZ.length; i++) {
             System.out.printf(" %-5s", rowZ[i]);
         }
@@ -723,7 +727,11 @@ public class LinProger {
         if (id < 0) {
             return "";
         }else if (id < numVar - numNegB) {
-            return "x" + (id + 1);
+            if (dual) {
+                return "y" + (id + 1);
+            }else {
+                return "x" + (id + 1);
+            }
         }else if (id < numVar) {
             return "μ" + (id + 1 - (numVar - numNegB));
         }else if (id < numVar + numNegB) {
@@ -825,5 +833,9 @@ public class LinProger {
         }else {
             return numerator + "/" + denominator;
         }
+    }
+
+    public void setDual(boolean dual) {
+        this.dual = dual;
     }
 }
