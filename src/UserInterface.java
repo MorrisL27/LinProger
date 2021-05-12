@@ -335,6 +335,8 @@ public class UserInterface {
                             setDual();
                             showProblem(true);
                             System.out.println();
+                        }else {
+                            System.out.println("Invalid command.\n");
                         }
                     } else {
                         System.out.println("Illegal number of arguments.\n");
@@ -343,9 +345,9 @@ public class UserInterface {
 
                 case "init":
                     if (s.length == 1) {
-                        transform(false);
+                        showProblem(false);
 
-                        // TODO: add dual
+                        transform(false);
 
                         if (modeMax) {
                             Nina.modeMax();
@@ -355,6 +357,23 @@ public class UserInterface {
 
                         initialized = true;
                         System.out.println("Nina initialized.\n");
+                    } else if (s.length == 2) {
+                        if (s[1].equals("dual")) {
+                            setDual();
+
+                            transform(true);
+
+                            if (modeMaxDual) {
+                                Nina.modeMax();
+                            } else {
+                                Nina.modeMin();
+                            }
+
+                            initialized = true;
+                            System.out.println("Nina initialized dual problem.\n");
+                        }else {
+                            System.out.println("Invalid command.\n");
+                        }
                     } else {
                         System.out.println("Illegal number of arguments.\n");
                     }
@@ -515,6 +534,7 @@ public class UserInterface {
         if (dual) {
             transform(numVarDual, numConsDual, fDual, aDual, bDual, solFDual, modeMaxDual);
         }else {
+            System.out.println("CNM " + numVar + " " +  numCons);
             transform(numVar, numCons, f, a, b, solF, modeMax);
         }
     }
@@ -529,7 +549,7 @@ public class UserInterface {
         tempA = Arrays.copyOf(a, a.length);
         tempB = Arrays.copyOf(b, b.length);
 
-        initialize(tempF, tempA, tempB);
+        initialize(tempF, tempA, tempB, numVar, numCons, solF, modeMax);
 
         Nina.setDimension(tempNumVar, tempNumCons);
         Nina.setNumNegB(tempNumNegB);
@@ -595,7 +615,7 @@ public class UserInterface {
 
 
     // conversion inside temp
-    public static void initialize(double[] f, double[][] a, double[] b) {
+    public static void initialize(double[] f, double[][] a, double[] b, int numVar, int numCons, double solF, boolean modeMax) {
         // rearrange here
         double[][] oldA;
         double[] oldB;

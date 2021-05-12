@@ -148,8 +148,13 @@ public class LinProger {
 
         bases = new int[numCons];
 
+        System.out.println("NumVar: " + numVar + "; NumCons: " + numCons);
+        System.out.println("Ideal length: " + (numVar + numCons + numSol));
+        System.out.println("RowZ length: " + rowZ.length);
+        System.out.println("tempF length: " + tempF.length);
         // set rowZ by tempF
         for (int i = 0; i < rowZ.length; i++) {
+            System.out.println("Iteration " + i);
             if (i < numVar) {
                 // actual value in rowZ is negative to tempF
                 if (f[i]!=0) {
@@ -244,6 +249,12 @@ public class LinProger {
         m = new double[numVar];
         solF = 0;
         solM = 0;
+
+        tempF = Arrays.copyOf(f, f.length);
+        tempM = Arrays.copyOf(m, m.length);
+
+        tempSolF = solF;
+        tempSolM = solM;
 
         checkMode();
     }
