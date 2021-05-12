@@ -205,23 +205,34 @@ public class LinProger {
             }
         }
 
-
+        // TODO: read double value
         for (int i = 0; i < rowZ.length; i++) {
             rowZRational[i] = "" + (int) rowZ[i];
+            //rowZRational[i] = findFraction(rowZ[i]);
         }
 
         for (int i = 0; i < rowM.length; i++) {
             rowMRational[i] = "" + (int) rowM[i];
+            //rowMRational[i] = findFraction(rowM[i]);
 
         }
 
         for (int i = 0; i < rowS.length; i++) {
             for (int j = 0; j < rowS[i].length; j++) {
                 rowSRational[i][j] = "" + (int) rowS[i][j];
+                //rowSRational[i][j] = findFraction(rowS[i][j]);
             }
         }
 
         resetBases();
+    }
+
+    private String findFraction(double number) {
+        String numStr = "" + number;
+
+        numStr.split(".");
+
+        return null;
     }
 
     private void resetBases() {
