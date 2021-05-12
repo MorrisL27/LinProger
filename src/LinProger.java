@@ -208,19 +208,16 @@ public class LinProger {
 
         for (int i = 0; i < rowZ.length; i++) {
             rowZRational[i] = "" + (int) rowZ[i];
-            //System.out.println("NMSL" + rowZRational[i]);
         }
 
         for (int i = 0; i < rowM.length; i++) {
             rowMRational[i] = "" + (int) rowM[i];
-            //System.out.println("NMSL" + rowMRational[i]);
 
         }
 
         for (int i = 0; i < rowS.length; i++) {
             for (int j = 0; j < rowS[i].length; j++) {
                 rowSRational[i][j] = "" + (int) rowS[i][j];
-                //System.out.println("NMSL" + rowSRational[i][j]);
             }
         }
 
