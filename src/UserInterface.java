@@ -47,7 +47,6 @@ public class UserInterface {
     static String lineT;
 
     public static void main(String[] args) {
-        //new LinProger().linProg();
         userInterface();
     }
 
@@ -67,8 +66,6 @@ public class UserInterface {
             command = in.nextLine();
             String[] s = handler(command);
             option = s[0].toLowerCase();
-            //int numVar;
-            //int numCons;
 
             switch (option) {
                 case "help":
@@ -313,6 +310,12 @@ public class UserInterface {
                                 System.out.println("mode: Min");
                             }
 
+                            if (Nina.getDual()) {
+                                System.out.println("type: Dual");
+                            } else {
+                                System.out.println("type: Primal");
+                            }
+
                             Nina.showTableau();
                             System.out.println();
                         }else {
@@ -540,7 +543,6 @@ public class UserInterface {
         if (dual) {
             transform(numVarDual, numConsDual, fDual, aDual, bDual, solFDual, modeMaxDual);
         }else {
-            System.out.println("CNM " + numVar + " " +  numCons);
             transform(numVar, numCons, f, a, b, solF, modeMax);
         }
     }
@@ -589,17 +591,22 @@ public class UserInterface {
             variable = "y";
         }
         String lineF = objective + " = ";
+        int display = 0;
+
         for (int i = 0; i < f.length; i++) {
-            if (f[i] < 0) {
-                lineF += "- " + (-f[i]) + variable + (i + 1) + " ";
+            display = (int) f[i];
+            if (display < 0) {
+                lineF += "- " + (-display) + variable + (i + 1) + " ";
             }else {
-                lineF += "+ " + f[i] + variable + (i+1) + " ";
+                lineF += "+ " + display + variable + (i+1) + " ";
             }
         }
-        if (solF < 0) {
-            lineF += "- " + (-solF);
+
+        display = (int) solF;
+        if (display < 0) {
+            lineF += "- " + (-display);
         }else {
-            lineF += "+ " + solF;
+            lineF += "+ " + display;
         }
 
         System.out.println(lineF);
@@ -610,14 +617,16 @@ public class UserInterface {
 
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[i].length; j++) {
-                if (a[i][j] < 0) {
-                    lineA += "- " + (-a[i][j]) + variable + (j+1) + " ";
+                display = (int) a[i][j];
+                if (display < 0) {
+                    lineA += "- " + (-display) + variable + (j+1) + " ";
                 }else {
-                    lineA += "+ " + a[i][j] + variable + (j+1) + " ";
+                    lineA += "+ " + display + variable + (j+1) + " ";
                 }
             }
 
-            lineA += "<= " + b[i];
+            display = (int) b[i];
+            lineA += "<= " + display;
 
             System.out.println(lineA);
             lineA = "";
@@ -807,9 +816,9 @@ public class UserInterface {
     public static void showBigM() {
         if (!lineMiu.equals("")) {
             System.out.println("Big-M Technique applied.");
+            System.out.println(lineMiu);
+            System.out.println(lineT);
         }
-        System.out.println(lineMiu);
-        System.out.println(lineT);
     }
 
     public static void setDual() {

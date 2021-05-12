@@ -309,11 +309,11 @@ public class LinProger {
         System.out.print("Basic ");
 
         for (int i = 0; i < numVar; i++) {
-            System.out.printf(" %-5s", findVariable(i));
+            System.out.printf(" %-6s", findVariable(i));
         }
 
         for (int i = 0; i < numCons; i++) {
-            System.out.printf(" %-5s", findVariable(i + numVar));
+            System.out.printf(" %-6s", findVariable(i + numVar));
         }
 
         System.out.println(" Solution");
@@ -327,13 +327,13 @@ public class LinProger {
         }
 
         for (int i = 0; i < rowZ.length; i++) {
-            System.out.printf(" %-5s", rowZ[i]);
+            System.out.printf(" %-6s", rowZ[i]);
         }
         System.out.println();
 
         System.out.print("M     ");
         for (int i = 0; i < rowM.length; i++) {
-            System.out.printf(" %-5s", rowM[i]);
+            System.out.printf(" %-6s", rowM[i]);
         }
         System.out.println();
 
@@ -341,7 +341,7 @@ public class LinProger {
         for (int j = 0; j < rowS.length; j++) {
             System.out.print(findVariable(bases[j]) + "    ");
             for (int i = 0; i < rowS[0].length; i++) {
-                System.out.printf(" %-5s", rowS[j][i]);
+                System.out.printf(" %-6s", rowS[j][i]);
             }
             System.out.println();
         }
@@ -837,5 +837,9 @@ public class LinProger {
 
     public void setDual(boolean dual) {
         this.dual = dual;
+    }
+
+    public boolean getDual() {
+        return dual;
     }
 }
