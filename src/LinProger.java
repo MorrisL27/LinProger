@@ -250,6 +250,12 @@ public class LinProger {
 
         tempF = Arrays.copyOf(f, f.length);
         tempM = Arrays.copyOf(m, m.length);
+        displayZ = Arrays.copyOf(rowZ, rowZ.length);
+        displayM = Arrays.copyOf(rowM, rowM.length);
+        rowZRational = new String[numVar + numCons + numSol];
+        rowMRational = new String[numVar + numCons + numSol];
+        rowZRationalDisplay = new String[rowZRational.length];
+        rowMRationalDisplay = new String[rowMRational.length];
 
         tempSolF = solF;
         tempSolM = solM;

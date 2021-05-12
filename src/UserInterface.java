@@ -348,7 +348,7 @@ public class UserInterface {
 
                 case "init":
                     if (s.length == 1) {
-                        showProblem(false);
+                        //showProblem(false);
 
                         transform(false);
 
@@ -363,7 +363,7 @@ public class UserInterface {
 
 
                         initialized = true;
-                        System.out.println("Nina initialized.\n");
+                        System.out.println("Nina initialized primal problem.\n");
                     } else if (s.length == 2) {
                         if (s[1].equals("dual")) {
                             setDual();
