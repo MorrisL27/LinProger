@@ -1,8 +1,5 @@
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class UserInterface {
     static LinProger Nina;
@@ -86,8 +83,10 @@ public class UserInterface {
                             case "def":
                                 System.out.println("Define the dimension of the problem.\n");
                                 System.out.println("DEF [numVar] [numCons]");
+                                System.out.println("DEF EQU [numEqu]");
                                 System.out.printf("%-15s%s", "numVar", "the number of variables.\n");
                                 System.out.printf("%-15s%s", "numCons", "the number of constraints.\n");
+                                System.out.printf("%-15s%s", "numEqu", "the number of equations.\n");
                                 // add more documentation here
 
                                 System.out.println();
@@ -187,7 +186,7 @@ public class UserInterface {
 
                                         setDual();
                                         initialized = false;
-                                        System.out.println("Update " + row + " successfully.\n");
+                                        System.out.println("Update " + row + (i + 1) + " successfully.\n");
                                     }
 
                                     break;
@@ -445,14 +444,14 @@ public class UserInterface {
 
                         try {
                             readVar = Integer.parseInt(s[1]);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             System.out.println("Number of variables is not a number.\n");
                             break;
                         }
 
                         try {
                             readCons = Integer.parseInt(s[2]);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             System.out.println("Number of constraints is not a number.\n");
                             break;
                         }
@@ -465,6 +464,72 @@ public class UserInterface {
 
                         initialized = false;
                         System.out.println("Status updated.\n");
+                    }else if (s.length == 2) {
+                        if (s[1].equals("equ")) {
+                            System.out.print("Please enter the number of equations: ");
+                            int readEqu = 0;
+                            try {
+                                readEqu = Integer.parseInt(in.nextLine());
+                            } catch (Exception e) {
+                                System.out.println("Number of equations is not a number.\n");
+                                break;
+                            }
+
+                            System.out.print("Please enter number of variables: ");
+                            int readVar = 0;
+                            try {
+                                readVar = Integer.parseInt(in.nextLine());
+                            } catch (Exception e) {
+                                System.out.println("Number of variables is not a number.\n");
+                                break;
+                            }
+
+                            System.out.print("Please enter number of constraints: ");
+                            int readCons = 0;
+                            try {
+                                readCons = Integer.parseInt(in.nextLine());
+                            } catch (Exception e) {
+                                System.out.println("Number of constraints is not a number.\n");
+                                break;
+                            }
+
+                            System.out.println("Please enter equations:\n" + "(" + readVar + " variables and 1 solutions)");
+                            ArrayList<double[]> equations = new ArrayList<>();
+
+                            double[] entries;
+                            for (int i = 0; i < readEqu; i++) {
+                                entries = fetchRow("equation " + (i + 1));
+
+                                if (entries == null) {
+                                    System.out.println("Update failed.\n");
+                                    break;
+                                }
+
+                                if (entries.length == readVar + 1) {
+                                    equations.add(entries);
+                                } else {
+                                    System.out.println("Illegal number of arguments.\n");
+                                    System.out.println("Equation should contain " + readVar + " entries and 1 solution.\n");
+                                    break;
+                                }
+
+                                System.out.println("Update equation " + (i + 1) + " successfully.\n");
+                            }
+
+                            numVar = readVar;
+                            numCons = readCons + readEqu*2;
+
+                            setDimension(numVar, numCons);
+
+                            setEquations(readVar, readCons, readEqu, equations);
+
+                            setDimensionDual(numVar, numCons);
+
+                            initialized = false;
+                            System.out.println("Status updated.\n");
+                        }else {
+                            System.out.println("Unknown command.\n");
+                        }
                     }else {
                         System.out.println("Illegal number of arguments.\n");
                     }
@@ -605,9 +670,15 @@ public class UserInterface {
                 lineF += "- " + variable + (i+1) + " ";
             }else if (display < 0) {
                 lineF += "- " + (-display) + variable + (i+1) + " ";
+            }else if (display == 0) {
+                if (i == 0) {
+                    lineF += "0" + variable + (i+1) + " ";
+                }else {
+                    lineF += "+ 0" + variable + (i+1) + " ";
+                }
             }else {
                 if (i == 0) {
-                    lineF += variable + (i+1) + " ";
+                    lineF += display + variable + (i+1) + " ";
                 }else {
                     lineF += "+ " + display + variable + (i+1) + " ";
                 }
@@ -980,5 +1051,32 @@ public class UserInterface {
         mDual = new double[numVarDual];
         solFDual = 0;
         solMDual = 0;
+    }
+
+    public static void setEquations(int readVar, int readCons, int readEqu, ArrayList<double[]> equations) {
+        System.out.println("Number of equations: " + readEqu);
+
+        for (double[] entries : equations) {
+            for (double entry : entries) {
+                System.out.print(entry + " ");
+            }
+            System.out.println();
+        }
+
+        // fill in last few equations
+        for (int i = 0; i < readEqu; i++) {
+            double[] entries = equations.get(i);
+
+            int index = 2*i;
+            for (int j = 0; j < entries.length; j++) {
+                if (j < readVar) {
+                    a[index + readCons][j] = entries[j];
+                    a[index + 1 + readCons][j] = -entries[j];
+                }else {
+                    b[index + readCons] = entries[j];
+                    b[index + 1 + readCons] = -entries[j];
+                }
+            }
+        }
     }
 }
