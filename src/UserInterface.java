@@ -43,12 +43,15 @@ public class UserInterface {
     static String lineMiu;
     static String lineT;
 
+    static boolean dual;
+
     public static void main(String[] args) {
         userInterface();
     }
 
     public static void userInterface() {
         Nina = new LinProger();
+        dual = false;
         defaultInitialize();
 
         System.out.println("Welcome to LinProger for simplex method.");
@@ -349,8 +352,9 @@ public class UserInterface {
                 case "init":
                     if (s.length == 1) {
                         //showProblem(false);
+                        dual = false;
 
-                        transform(false);
+                        transform(dual);
 
                         if (modeMax) {
                             Nina.modeMax();
@@ -359,16 +363,18 @@ public class UserInterface {
                         }
 
 
-                        Nina.setDual(false);
+                        Nina.setDual(dual);
 
 
                         initialized = true;
                         System.out.println("Nina initialized primal problem.\n");
                     } else if (s.length == 2) {
                         if (s[1].equals("dual")) {
+                            dual = true;
+
                             setDual();
 
-                            transform(true);
+                            transform(dual);
 
                             if (modeMaxDual) {
                                 Nina.modeMax();
@@ -376,7 +382,7 @@ public class UserInterface {
                                 Nina.modeMin();
                             }
 
-                            Nina.setDual(true);
+                            Nina.setDual(dual);
 
                             initialized = true;
                             System.out.println("Nina initialized dual problem.\n");
@@ -752,6 +758,12 @@ public class UserInterface {
         // show line i applied Big-M
         lineMiu = "";
         lineT = "";
+
+        String variable = "x";
+        if (dual) {
+            variable = "y";
+        }
+
         for (int i = 0; i < b.length; i++) {
             if (oldB[i] < 0) {
                 for (int j = 0; j < a[i].length; j++) {
@@ -763,36 +775,72 @@ public class UserInterface {
                 // show line i applied Big-M
                 lineMiu += "μ" + index + " = ";
                 lineT += "t" + index + " = ";
+
+                int display = 0;
                 for (int j = 0; j < a[i].length; j++) {
                     double ai = -oldA[i][j];
-                    if (ai < 0) {
-                        lineMiu += "- " + (-ai) + "x" + (j+1) + " ";
+                    display = (int) ai;
+
+//                    if (ai < 0) {
+//                        lineMiu += "- " + (-ai) + "x" + (j+1) + " ";
+//                    }else {
+//                        lineMiu += "+ " + ai + "x" + (j+1) + " ";
+//                    }
+                    if (display == 1) {
+                        lineMiu += "+  " + variable + (j+1) + " ";
+                    }else if (display == -1) {
+                        lineMiu += "-  " + variable + (j+1) + " ";
+                    }else if (display == 0) {
+                        lineMiu += "+ 0" + variable + (j+1) + " ";
+                    }else if (display < 0) {
+                        lineMiu += "- " + (-display) + variable + (j+1) + " ";
                     }else {
-                        lineMiu += "+ " + ai + "x" + (j+1) + " ";
+                        lineMiu += "+ " + display + variable + (j+1) + " ";
                     }
 
                     ai = oldA[i][j];
-                    if (ai < 0) {
-                        lineT += "- " + (-ai) + "x" + (j+1) + " ";
+                    display = (int) ai;
+
+//                    if (ai < 0) {
+//                        lineT += "- " + (-ai) + "x" + (j+1) + " ";
+//                    }else {
+//                        lineT += "+ " + ai + "x" + (j+1) + " ";
+//                    }
+                    if (display == 1) {
+                        lineT += "+  " + variable + (j+1) + " ";
+                    }else if (display == -1) {
+                        lineT += "-  " + variable + (j+1) + " ";
+                    }else if (display == 0) {
+                        lineT += "+ 0" + variable + (j+1) + " ";
+                    }else if (display < 0) {
+                        lineT += "- " + (-display) + variable + (j+1) + " ";
                     }else {
-                        lineT += "+ " + ai + "x" + (j+1) + " ";
+                        lineT += "+ " + display + variable + (j+1) + " ";
                     }
                 }
+
                 double bi = oldB[i];
-                if (bi < 0) {
-                    lineMiu += "- " + (-bi) + "\n";
+                display = (int) bi;
+
+                if (display == 0) {
+                    lineMiu += "+ 0\n";
+                }else if (display < 0) {
+                    lineMiu += "- " + (-display) + "\n";
                 }else {
-                    lineMiu += "+ " + bi + "\n";
+                    lineMiu += "+ " + display + "\n";
                 }
 
                 bi = -bi;
+                display = (int) bi;
 
                 lineT += "+ μ" + index + " ";
 
-                if (bi < 0) {
-                    lineT += "- " + (-bi) + "\n";
+                if (display == 0) {
+                    lineT += "+ 0\n";
+                }else if (display < 0) {
+                    lineT += "- " + (-display) + "\n";
                 }else {
-                    lineT += "+ " + bi + "\n";
+                    lineT += "+ " + display + "\n";
                 }
 
                 indexRe++;
