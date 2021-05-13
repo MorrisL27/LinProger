@@ -43,6 +43,8 @@ public class LinProger {
 
     private boolean dual;
 
+    private boolean decimal;
+
     private int numNegB;
 
     public static void main(String[] args) {
@@ -52,6 +54,7 @@ public class LinProger {
     public LinProger() {
         modeMax = false;// min mode initially
         dual = false;
+        decimal = false;
     }
 
     public int getNumVar() {
@@ -272,8 +275,13 @@ public class LinProger {
     }
 
     public void showTableau() {
-        //showTableau(displayZ, displayM, rowS);
-        showTableau(rowZRationalDisplay, rowMRationalDisplay, rowSRational);
+        if (decimal) {
+            showTableau(displayZ, displayM, rowS);
+        }else {
+            showTableau(rowZRationalDisplay, rowMRationalDisplay, rowSRational);
+        }
+
+
         //showTableau(rowZRational, rowMRational, rowSRational);
         //showTableau(rowZ, rowM, rowS);
     }
@@ -580,12 +588,7 @@ public class LinProger {
                 }
             }
 
-            //showTableau(displayZ, displayM, rowS);
-            //showTableau(displayZ, displayM, rowS);
-            showTableau(rowZRationalDisplay, rowMRationalDisplay, rowSRational);
-
-            //showTableau(rowZ, rowM, rowS);
-            //System.out.println();
+            showTableau();
         }
 
         //System.out.println("Optimal value " + optimum + " has found.\n");
@@ -855,5 +858,13 @@ public class LinProger {
 
     public boolean getDual() {
         return dual;
+    }
+
+    public void setDecimal(boolean decimal) {
+        this.decimal = decimal;
+    }
+
+    public boolean getDecimal() {
+        return decimal;
     }
 }

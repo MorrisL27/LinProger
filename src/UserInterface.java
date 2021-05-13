@@ -140,6 +140,7 @@ public class UserInterface {
                             case "run":
                                 System.out.println("Calculate and display the tableau step by step.\n");
                                 System.out.println("RUN\n");
+                                System.out.println("RUN DECI\n");
                                 break;
 
                             case "exit":
@@ -391,9 +392,23 @@ public class UserInterface {
                     if (s.length == 1) {
                         if (initialized) {
                             showBigM();
+                            Nina.setDecimal(false);
                             Nina.run();
-                        }else {
+                        } else {
                             System.out.println("Nina not initialized by new problem!\n");
+                        }
+                    }else if (s.length == 2) {
+                        if (s[1].equals("deci")) {
+                            if (initialized) {
+                                showBigM();
+                                Nina.setDecimal(true);
+                                System.out.println("Nina run in decimal mode.\n");
+                                Nina.run();
+                            } else {
+                                System.out.println("Nina not initialized by new problem!\n");
+                            }
+                        }else {
+                            System.out.println("Unknown command.\n");
                         }
                     } else {
                         System.out.println("Illegal number of arguments.\n");
