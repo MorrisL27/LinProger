@@ -416,7 +416,12 @@ public class LinProger {
 
             if (allNegative) {
                 //finish = true;
-                optimum = rowZ[rowZ.length - 1];
+                if (rowM[rowM.length - 1] != 0) {
+                    System.out.println("The problem is infeasible.\n");
+                }else {
+                    System.out.println("Optimal value has found.\n");
+                    optimum = rowZ[rowZ.length - 1];
+                }
                 break;
             }
 
@@ -440,6 +445,7 @@ public class LinProger {
 
             if (leaving == -1) {
                 System.out.println("Leaving variable does not exist!");
+                System.out.println("The problem is unbounded.\n");
                 break;
             }
 
@@ -592,7 +598,7 @@ public class LinProger {
         }
 
         //System.out.println("Optimal value " + optimum + " has found.\n");
-        System.out.println("Optimal value has found.\n");
+//        System.out.println("Optimal value has found.\n");
 
         checkMode();
     }
